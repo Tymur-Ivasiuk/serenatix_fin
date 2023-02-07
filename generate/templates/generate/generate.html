@@ -1,0 +1,357 @@
+{% extends 'generate/main_base.html' %}
+{% load static %}
+
+{% block main %}
+<main class="main">
+    <p class="generate-desc">
+        Tell us your story. Simply answer questions and share as much as you can for a personalized love letter or poem.
+    </p>
+
+    {% if messages %}
+        {% for i in messages %}
+            {% if i.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                <div class="message-main success-msg">
+                    {{ i }}
+                </div>
+            {% elif i.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                <div class="message-main error-msg">
+                    {{ i }}
+                </div>
+            {% else %}
+                 <div class="message-main">
+                    {{ i }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <div class="generate-tabs">
+        <form class="generate-form" method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>Relationship type</td>
+                    <td>
+                        <div class="select">
+                            <button type="button" class="select_header" readonly="true">
+                                <div class="select_current">Combo Box</div>
+                                <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                            </button>
+
+                            <ol class="select_list">
+                                {% for i in relationship_types %}
+                                    <li class="select_item" data-value="{{ i.title }}">{{ i.title }}</li>
+                                {% endfor %}
+                            </ol>
+                            {{ form.relationship_type }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Partner name</td>
+                    <td>
+                        <div class="input_wrap">
+                            {{ form.partner_name }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Relationship start date</td>
+                    <td>
+                        <div class="input_wrap">
+                            {{ form.relationship_start_date }}
+                            <img src="{% static 'generate/img/icon/calendar.svg' %}" alt="pass-icon" class="input-icon dont-event">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Occasion</td>
+                    <td>
+                        <div class="select">
+                            <button type="button" class="select_header" readonly="true">
+                                <div class="select_current">Combo Box</div>
+                                <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                            </button>
+
+                            <ol class="select_list">
+                                {% for i in occasion %}
+                                    <li class="select_item" data-value="{{ i.title }}">{{ i.title }}</li>
+                                {% endfor %}
+                            </ol>
+                            {{ form.occasion }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Poem style</td>
+                    <td>
+                        <div class="select">
+                            <button type="button" class="select_header" readonly="true">
+                                <div class="select_current">Combo Box</div>
+                                <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                            </button>
+
+                            <ol class="select_list">
+                                {% for i in poem_styles %}
+                                    <li class="select_item" data-value="{{ i.title }}">{{ i.title }}</li>
+                                {% endfor %}
+                            </ol>
+                            {{ form.poem_style }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Letter style</td>
+                    <td>
+                        <div class="select">
+                            <button type="button" class="select_header" readonly="true">
+                                <div class="select_current">Combo Box</div>
+                                <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                            </button>
+
+                            <ol class="select_list">
+                                {% for i in letter_styles %}
+                                    <li class="select_item" data-value="{{ i.title }}">{{ i.title }}</li>
+                                {% endfor %}
+                            </ol>
+                            {{ form.letter_style }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Tone</td>
+                    <td>
+                        <div class="select">
+                            <button type="button" class="select_header" readonly="true">
+                                <div class="select_current">Combo Box</div>
+                                <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                            </button>
+
+                            <ol class="select_list">
+                                {% for i in tone %}
+                                    <li class="select_item" data-value="{{ i.title }}">{{ i.title }}</li>
+                                {% endfor %}
+                            </ol>
+                            {{ form.tone }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Genders</td>
+                    <td>
+                        <div class="select">
+                            <button type="button" class="select_header" readonly="true">
+                                <div class="select_current">Combo Box</div>
+                                <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                            </button>
+
+                            <ol class="select_list">
+                                <li class="select_item" data-value="Man writing to a woman">Man writing to a woman</li>
+                                <li class="select_item" data-value="Woman writing to a man">Woman writing to a man</li>
+                                <li class="select_item" data-value="Male writing to a Male">Male writing to a Male</li>
+                                <li class="select_item" data-value="Female writing to Female">Female writing to Female</li>
+                            </ol>
+                            {{ form.genders }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+
+            <div class="buttons">
+                <button type="submit" name="type" value="Note" class="magenta-btn">Generate a Love Note</button>
+                <button type="submit" name="type" value="Poem" class="blue-btn">Generate a Poem</button>
+                <button type="submit" name="type" value="Letter" class="purple-btn">Generate a Love Letter</button>
+            </div>
+        </form>
+
+        <div class="generate-tab">
+            <div class="credits-info">
+                <div class="heart heart-adaptive">
+                    <img src="{% static 'generate/img/heart.svg' %}">
+                    <p class="count-credits">
+                        {{ request.user.profile.credits_count }}
+                    </p>
+                    <p class="count-credits_desc">
+                        total Credits
+                    </p>
+                </div>
+                <div class="referal">
+                    <p class="credits-info_title">
+                        Refer friends, earn credits
+                    </p>
+                    <p class="referal-desc">
+                        Send credits to friends and create magical love content for each friend who joins
+                    </p>
+                    <button class="referal-copy blue-btn">
+                        Copy referral link
+                    </button>
+                </div>
+                <div class="heart big-heart">
+                    <img src="{% static 'generate/img/heart.svg' %}">
+                    <p class="count-credits">
+                        {{ request.user.profile.credits_count }}
+                    </p>
+                    <p class="count-credits_desc">
+                        total Credits
+                    </p>
+                </div>
+                <div class="credits-buy">
+                    <p class="credits-info_title">
+                        Buy {{ credits_buy.credits_count }} credits only for <span>${{ credits_buy.price }}</span> now and make your loved one feel special today!
+                    </p>
+                    <div id="paypal-button-container"></div>
+                </div>
+            </div>
+
+            {% if archive %}
+                <div class="archive">
+                    <div class="archive-title">
+                            <p>Archive</p>
+                            <a href="{% url 'archive' %}">
+                                <button class="magenta-btn">
+                                    View all
+                                </button>
+                            </a>
+                        </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>
+                                    <div>
+                                        Name
+<!--                                        <div class="table-sorting">-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        Type
+<!--                                        <div class="table-sorting">-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        Date
+<!--                                        <div class="table-sorting">-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in archive %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ i.get_absolute_url }}">
+                                            {{ i.title }}
+                                        </a>
+                                    </td>
+                                    <td>{{ i.content_type }}</td>
+                                    <td>{{ i.time_create|date:"j F, Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block js_scripts %}
+<script src="{% static 'generate/js/number.js' %}"></script>
+<script src="{% static 'generate/js/select.js' %}"></script>
+<script src="https://www.paypal.com/sdk/js?client-id={{paypal}}&currency=USD"></script>
+<script>
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var total = {{ credits_buy.price }}
+    var credits = {{ credits_buy.credits_count }}
+
+    function completeTransaction() {
+        var url = "{% url 'completeTransation' %}"
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                "X-CSRFToken": getCookie('csrftoken'),
+            },
+            body: JSON.stringify({"credits": credits, "price": total})
+        })
+    }
+
+    // Render the PayPal button into #paypal-button-container
+    paypal.Buttons({
+
+        style: {
+            color:  'blue',
+            shape:  'pill',
+            label:  'paypal',
+            height: 40,
+            layout: 'horizontal'
+        },
+
+        // Set up the transaction
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: total
+                    }
+                }]
+            });
+        },
+
+        // Finalize the transaction
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(orderData) {
+                // Successful capture! For demo purposes:
+
+                completeTransaction();
+
+                window.alert("Thanks"); //ТРЕБА УКАЗАТИ СВОЄ ПОВІДОМЛЕННЯ
+
+                document.location.reload();
+            });
+        }
+
+
+    }).render('#paypal-button-container');
+</script>
+{% endblock %}

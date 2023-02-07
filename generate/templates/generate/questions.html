@@ -1,0 +1,90 @@
+{% extends 'generate/main_base.html' %}
+{% load static %}
+
+{% block css_styles %}
+<link rel="stylesheet" href="{% static 'generate/css/questions.css' %}">
+{% endblock %}
+
+
+{% block main %}
+<main class="main">
+    <div class="question-header">
+        <div class="quastion-heart">
+            <img src="{% static 'generate/img/heart.svg' %}">
+            <p class="quastion-count">
+                0/0
+            </p>
+            <p class="quastion-count_desc">
+                QUESTION
+            </p>
+        </div>
+    </div>
+
+
+    <form class="answers" method="post">
+        {% csrf_token %}
+
+        <div class="answers-tables">
+
+            {% for i in questions %}
+            <div class="answer-wrappper">
+                <h2 class="quastion-title">
+                    {{ i.question }}
+                </h2>
+                <div class="answers-table">
+                    {% for j in i.answers_set.all %}
+                        <div class="checkbox-info">
+                            {% if j.answer in saved_answers %}
+                                <input type="checkbox" checked name="{{i.id}}" value="{{ j.answer }}" class="save-info-input">
+                            {% else %}
+                                <input type="checkbox" name="{{i.id}}" value="{{ j.answer }}" class="save-info-input">
+                            {% endif %}
+                            <label class="checkbox-desc">{{ j.answer }}</label>
+                        </div>
+                    {% endfor %}
+
+
+                    <div class="checkbox-info other-answer">
+                        <input type="checkbox" class="save-info-input">
+                        <label class="checkbox-desc">Any Other?</label>
+
+                    </div>
+                    <div class="input_wrap">
+                        <input type="text" name="{{i.id}}" class="answer-input" disabled placeholder="Enter any other anser">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="questions-buttons">
+            <div class="slick-buttons">
+                <button type="button" class="previous-question">
+                    Previous Question
+                </button>
+                <button type="button" class="next-question">
+                    Next Question
+                </button>
+            </div>
+            <div class="send-buttons">
+                <button name="save" value="on" class="blue-btn">
+                    SAVE
+                </button>
+                <button name="finish" value="on" class="magenta-btn">
+                    Finished
+                </button>
+            </div>
+        </div>
+
+    </form>
+</main>
+{% endblock %}
+
+
+{% block js_scripts %}
+<script src="{% static 'generate/js/fontAwesome.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<script src="{% static 'generate/js/slick.min.js' %}"></script>
+<script src="{% static 'generate/js/slider.js' %}"></script>
+<script src="{% static 'generate/js/otherAnswer.js' %}"></script>
+{% endblock %}

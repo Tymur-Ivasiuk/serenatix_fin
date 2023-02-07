@@ -1,0 +1,122 @@
+.main {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 40px;
+    row-gap: 60px;
+}
+.main > div {
+    flex: 1;
+    min-width: 600px;
+}
+
+.account-detail {
+    background: linear-gradient(214.92deg, #010E29 7.83%, #00153A 100%);
+    padding: 50px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.profile-icon {
+    width: 15%;
+    min-width: 100px;
+    margin-bottom: 15px;
+}
+.hello {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.account-form {
+    color: #FFF;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.account-form table {
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.account-form table tr td:first-of-type{
+    padding-right: 60px;
+}
+.account-form table tr td {
+    text-align: center;
+    padding: 12.5px 0;
+}
+
+.partner-info {
+    padding-top: 20px !important;
+    padding-right: 0 !important;
+    font-size: 20px;
+}
+
+.account-form button {
+    padding: 13px 20px;
+    width: 100%;
+    color: #FFF;
+    border-radius: 10px;
+}
+
+.important-buttons {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+.important-buttons a {
+    text-decoration: none;
+    width: 100%;
+    color: #FFF;
+}
+.important-buttons a div {
+    text-align: center;
+    padding: 15px 10px;
+    border-radius: 8px;
+}
+
+.archive {
+    margin-bottom: 30px;
+}
+
+
+
+/* ADAPTIVE */
+@media (max-width: 1000px) {
+    .main {
+        flex-direction: column;
+    }
+    .main > div {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 650px) {
+    .account-form table tr {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        padding-bottom: 25px;
+    }
+    .account-form table tr td {
+        text-align: left;
+        padding: 7.5px 0;
+    }
+}
+
+@media (max-width: 550px) {
+    .account-form table tr {
+        padding-bottom: 15px;
+    }
+    .account-detail {
+        padding: 35px;
+    }
+}
+
+@media (max-width: 500px) {
+    .account-detail {
+        padding: 20px;
+    }
+}

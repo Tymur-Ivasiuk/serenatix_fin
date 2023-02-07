@@ -1,0 +1,347 @@
+{% extends 'generate/main_base.html' %}
+{% load static %}
+
+{% block css_styles %}
+<link rel="stylesheet" href="{% static 'generate/css/account.css' %}">
+<link rel="stylesheet" href="{% static 'generate/css/login.css' %}">
+{% endblock %}
+
+{% block main %}
+<main class="main">
+    <div class="account-detail">
+        <img src="{% static 'generate/img/icon/user.svg' %}" alt="user" class="profile-icon">
+        <p class="hello">Hello, {{ request.user.first_name }}!</p>
+
+        {% if messages %}
+            {% for i in messages %}
+                {% if i.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                    <div class="message-main success-msg">
+                        {{ i }}
+                    </div>
+                {% elif i.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <div class="message-main error-msg">
+                        {{ i }}
+                    </div>
+                {% else %}
+                     <div class="message-main">
+                        {{ i }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <form class="account-form" method="post">
+            {% csrf_token %}
+
+
+
+            <table>
+                <tr>
+                    <td>Fisrt name</td>
+                    <td>
+                        <div class="input_wrap">
+                            {{ form.first_name }}
+                        </div>
+                    </td>
+                </tr>
+                {% if form.first_name.errors %}
+                    <tr>
+                        <td colspan="2" class="form-error">
+                            {{form.first_name.errors}}
+                        </td>
+                    </tr>
+                {% endif %}
+
+                <tr>
+                    <td>Last name</td>
+                    <td>
+                        <div class="input_wrap">
+                            {{ form.last_name }}
+                        </div>
+                    </td>
+                </tr>
+                {% if form.last_name.errors %}
+                    <tr>
+                        <td colspan="2" class="form-error">
+                            {{form.last_name.errors}}
+                        </td>
+                    </tr>
+                {% endif %}
+
+                <tr>
+                    <td>Email address</td>
+                    <td>
+                        <div class="input_wrap">
+                            {{ form.email }}
+                        </div>
+                    </td>
+                </tr>
+                {% if form.email.errors %}
+                    <tr>
+                        <td colspan="2" class="form-error">
+                            {{form.email.errors}}
+                        </td>
+                    </tr>
+                {% endif %}
+
+                <tr>
+                    <td>Phone number</td>
+                    <td>
+                        <div class="input_wrap">
+                            {{ form.phone_number }}
+                        </div>
+                    </td>
+                </tr>
+                {% if form.phone_number.errors %}
+                    <tr>
+                        <td colspan="2" class="form-error">
+                            {{ form.phone_number.errors }}
+                        </td>
+                    </tr>
+                {% endif %}
+
+                <tr>
+                    <td colspan="2" class="partner-info">
+                        Partner info
+                    </td>
+                </tr>
+                <tr>
+                    <td>Partner email</td>
+                    <td>
+                        <div class="input_wrap">
+                            {{ form.partner_email }}
+                        </div>
+                    </td>
+                </tr>
+                {% if form.partner_email.errors %}
+                    <tr>
+                        <td colspan="2" class="form-error">
+                            {{form.partner_email.errors}}
+                        </td>
+                    </tr>
+                {% endif %}
+
+                <tr>
+                    <td>Partner phone</td>
+                    <td>
+                        <div class="input_wrap">
+                            {{ form.partner_phone }}
+                        </div>
+                    </td>
+                </tr>
+                {% if form.partner_phone.errors %}
+                    <tr>
+                        <td colspan="2" class="form-error">
+                            {{form.partner_phone.errors}}
+                        </td>
+                    </tr>
+                {% endif %}
+            </table>
+
+            <button class="blue-btn">
+                SAVE
+            </button>
+        </form>
+    </div>
+    <div class="info-account">
+        <div class="generate-tab">
+            <div class="credits-info">
+                <div class="heart heart-adaptive">
+                    <img src="{% static 'generate/img/heart.svg' %}">
+                    <p class="count-credits">
+                        {{ request.user.profile.credits_count }}
+                    </p>
+                    <p class="count-credits_desc">
+                        total Credits
+                    </p>
+                </div>
+                <div class="referal">
+                    <p class="credits-info_title">
+                        Refer and earn credits
+                    </p>
+                    <p class="referal-desc">
+                        Send credits to friends and create magical love content for each friend who joins
+                    </p>
+                    <button class="referal-copy blue-btn">
+                        Copy referral link
+                    </button>
+                </div>
+                <div class="heart big-heart">
+                    <img src="{% static 'generate/img/heart.svg' %}">
+                    <p class="count-credits">
+                        {{ request.user.profile.credits_count }}
+                    </p>
+                    <p class="count-credits_desc">
+                        total Credits
+                    </p>
+                </div>
+                <div class="credits-buy">
+                    <p class="credits-info_title">
+                        Let’s Buy more {{ credits_buy.credits_count }} credits only for <span>${{ credits_buy.price }}</span>
+                    </p>
+                    <div id="paypal-button-container"></div>
+                </div>
+            </div>
+
+            {% if archive %}
+                <div class="archive">
+                    <div class="archive-title">
+                            <p>Archive</p>
+                            <a href="{% url 'archive' %}">
+                                <button class="magenta-btn">
+                                    View all
+                                </button>
+                            </a>
+                        </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>
+                                    <div>
+                                        Name
+<!--                                        <div class="table-sorting">-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        Type
+<!--                                        <div class="table-sorting">-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        Date
+<!--                                        <div class="table-sorting">-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in archive %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ i.get_absolute_url }}">
+                                            {{ i.title }}
+                                        </a>
+                                    </td>
+                                    <td>{{ i.content_type }}</td>
+                                    <td>{{ i.time_create|date:"j F, Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+
+            <div class="important-buttons">
+                <a href="{% url 'change_password' %}">
+                    <div class="purple-btn">
+                        Change Password
+                    </div>
+                </a>
+                <a href="{% url 'logout' %}">
+                    <div class="magenta-btn">
+                        LOGOUT
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block js_scripts %}
+<script src="https://www.paypal.com/sdk/js?client-id={{paypal}}&currency=USD"></script>
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var total = {{ credits_buy.price }}
+    var credits = {{ credits_buy.credits_count }}
+
+    function completeTransaction() {
+        var url = "{% url 'completeTransation' %}"
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                "X-CSRFToken": getCookie('csrftoken'),
+            },
+            body: JSON.stringify({"credits": credits, "price": total})
+        })
+    }
+
+    // Render the PayPal button into #paypal-button-container
+    paypal.Buttons({
+
+        style: {
+            color:  'blue',
+            shape:  'pill',
+            label:  'paypal',
+            height: 40,
+            layout: 'horizontal'
+        },
+
+        // Set up the transaction
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: total
+                    }
+                }]
+            });
+        },
+
+        // Finalize the transaction
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(orderData) {
+                // Successful capture! For demo purposes:
+
+                completeTransaction();
+
+                window.alert("Thanks"); //ТРЕБА УКАЗАТИ СВОЄ ПОВІДОМЛЕННЯ
+
+                document.location.reload();
+            });
+        }
+
+
+    }).render('#paypal-button-container');
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'generate/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'generate/css/styles-main.css' %}">
+
+    {% block css_styles %}
+    {% endblock %}
+
+    <title>{{ title }}</title>
+</head>
+<body>
+    <div class="wrapper">
+        {% block header %}
+        <header class="header">
+            <a href="{% url 'generate' %}" class="home-link">
+                <img src="{% static 'generate/img/logo-with-text-small.svg' %}" alt="logo">
+            </a>
+            <div class="header-menu">
+                <a href="{% url 'account' %}">Account</a>
+                |
+                <a href="{% url 'generate' %}">Generate</a>
+                |
+                <a href="{% url 'contact' %}">Contact Us</a>
+            </div>
+        </header>
+        {% endblock %}
+
+
+        {% block main %}
+
+        {% endblock %}
+    </div>
+</body>
+{% block js_scripts %}
+{% endblock %}
+</html>

@@ -1,0 +1,29 @@
+{% extends 'generate/homepage_base.html' %}
+{% load static %}
+
+{% block sidebar %}
+<div class="blocks">
+    <div class="sidebar_block">
+        <div class="sidebar_block_wrap">
+            <p class="block-title">
+                Create a love letter or poem
+            </p>
+            <a href="{% url 'login' %}" class="login-btn">
+                <button class="block-btn red_btn">
+                    Start
+                </button>
+            </a>
+        </div>
+    </div>
+    <div class="sidebar_block">
+        <div class="sidebar_block_wrap">
+            <p class="block-title">
+                Refer friends, earn credits
+            </p>
+            <button class="block-btn blue_btn copy-non-active">
+                Copy referral link
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,480 @@
+/* body * {
+    outline: 1px solid red;
+} */
+
+.ads-banner-big {
+    width: 100%;
+    height: 200px;
+    background: #9FA7B5;
+}
+.ads-banner-side {
+    display: flex;
+    max-width: 200px;
+    width: 100%;
+    min-height: 100%;
+    background: #9FA7B5;
+}
+
+main > div {
+    margin-bottom: 20px;
+}
+
+.content-wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    column-gap: 50px;
+
+    margin-bottom: 50px;
+}
+
+.content {
+    width: 100%;
+}
+
+.answered-questions {
+    padding: 53px 50px;
+    background: #00153A;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0px 50px 100px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 20px;
+    row-gap: 20px;
+
+    margin-bottom: 50px;
+}
+
+.answered-questions-title {
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 150%;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.answered-questions button {
+    height: 100%;
+    padding: 10px 40px;
+    border-radius: 8px;
+    color: #FFF;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 27px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+
+.letter {
+    margin-bottom: 50px;
+}
+
+.letter-heare-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+
+    column-gap: 20px;
+    row-gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+.letter-heare-info button {
+    height: 100%;
+    padding: 17px 20px;
+    border-radius: 8px;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 27px;
+    text-align: center;
+    color: #FFFFFF;
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+.subject {
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 150%;
+    color: #EB3474;
+}
+.letter-title {
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 150%;
+    color: #FFFFFF;
+}
+
+.letter-text {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 35px;
+}
+
+
+.rewrite-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #00153A;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0px 50px 100px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+
+    column-gap: 50px;
+    row-gap: 15px;
+
+    padding: 34px 47px;
+    margin-bottom: 40px;
+}
+.rewrite-option > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.rewrite-option button {
+    white-space: nowrap;
+    border-radius: 8px;
+    color: #FFF;
+    padding: 16px 10px;
+}
+.rewrite-text {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 150%;
+}
+
+
+.send-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 15px;
+    row-gap: 15px;
+
+    margin-bottom: 50px;
+}
+
+.send-buttons > div {
+    display: flex;
+    column-gap: 15px;
+}
+.send-buttons a {
+    width: 100%;
+}
+.send-btn {
+    width: 100%;
+    background: transparent;
+    box-shadow: 0px 50px 100px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 150%;
+    text-align: center;
+
+    color: #FFFFFF;
+    border-width: 4px;
+    border-style: solid;
+    border: 1px solid transparent;
+    padding: 29px 0;
+
+    white-space: nowrap;
+}
+
+.mg-color {
+    background: linear-gradient(#000C25, #000C25) padding-box,
+                linear-gradient(166.03deg, #FE95B9 -3.11%, #EB3474 90.04%) border-box;
+}
+.pr-color {
+    background: linear-gradient(#000C25, #000C25) padding-box,
+                linear-gradient(166.03deg, #D083FF -3.11%, #9200EB 90.04%) border-box;
+}
+.bl-color {
+    background: linear-gradient(#000C25, #000C25) padding-box,
+    linear-gradient(166.03deg, #7FC0FF -3.11%, #006CD3 90.04%) border-box;
+}
+
+
+.share-btn {
+    font-size: 40px;
+}
+
+
+
+
+/* REMINDERS */
+.reminders {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 30px;
+    row-gap: 15px;
+    align-items: stretch;
+}
+
+.reminders-block {
+    max-width: 583px;
+
+    padding: 50px;
+    background: linear-gradient(214.92deg, #010E29 7.83%, #00153A 100%);
+    box-shadow: 0px 50px 100px rgba(0, 0, 0, 0.25);
+    border-radius: 40px;
+}
+
+.reminders-title {
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 150%;
+    margin-bottom: 25px;
+}
+
+.reminders-block table {
+    width: 100%;
+    margin-bottom: 50px;
+}
+.reminders-block table td:first-of-type {
+    padding-right: 30px;
+}
+.reminders-block table td {
+    width: 50%;
+    padding-top: 12.5px;
+    padding-bottom: 12.5px;
+}
+
+
+.reminders-block > div {
+    display: flex;
+    column-gap: 16px;
+    flex-wrap: wrap;
+}
+.reminders-block button {
+    flex: 1;
+    /* min-width: 125px; */
+    width: 100%;
+    padding: 17px 10px;
+    border-radius: 8px;
+    color: #FFF;
+    white-space: nowrap;
+}
+
+.reminders-block table input[type="time"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+
+    width: 23px;
+    height: 23px;
+    background: url(../img/icon/clock.svg) no-repeat;
+}
+
+.rewrite-selects {
+    display: flex;
+    column-gap: 20px;
+}
+.select_current {
+    white-space: nowrap;
+    margin-left: 0;
+    width: 150px;
+    text-align: left;
+    pointer-events: none;
+}
+
+
+
+/* ADAPTIVE */
+@media (max-width: 1160px) {
+    .rewrite-option {
+        flex-direction: column;
+    }
+    .rewrite-option a {
+        width: 100%;
+        max-width: 300px;
+    }
+    .rewrite-option a button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 1400px) {
+    .reminders-block {
+        max-width: none;
+        width: 100%;
+    }
+}
+
+@media (max-width: 1280px){ 
+    .answered-questions {
+        flex-direction: column;
+        justify-content: center;
+    }
+    .answered-questions {
+        padding: 40px;
+    }
+
+    .send-buttons {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 1200px) {
+    .ads-banner-side {
+        display: none;
+    }
+}
+
+@media (max-width: 900px) {
+    .rewrite-option {
+        flex-direction: column;
+        row-gap: 20px;
+    }
+    .rewrite-text {
+        font-size: 22px;
+        line-height: 150%;
+        text-align: center;
+    }
+    .rewrite-option > div {
+        width: 100%;
+        flex-direction: column;
+        row-gap: 20px;
+    }
+    .rewrite-option button, .rewrite-option a {
+        width: 100%;
+    }
+}
+
+@media (max-width: 800px) {
+    .letter-text {
+        font-size: 16px;
+        line-height: 30px;
+    }
+}
+
+@media (max-width: 600px) {
+    .answered-questions {
+        padding: 30px;
+    }
+    .answered-questions-title {
+        font-size: 26px;
+    }
+
+    .rewrite-option {
+        padding: 25px 30px;
+    }
+
+
+    .rewrite-option button {
+        padding: 16px 20px;
+    }
+
+    .reminders-block {
+        padding: 40px;
+    }
+    .reminders-title {
+        font-size: 26px;
+    }
+    .reminders-block table td {
+        width: 100%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .reminders-block table tr {
+        display: flex;
+        flex-direction: column;
+    }
+    .reminders-block table td:first-of-type {
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 500px) {
+    .letter-heare-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .subject {
+        font-size: 18px;
+    }
+    .letter-title {
+        font-size: 24px;
+    }
+    .letter-heare-info button {
+        padding: 10px 10px;
+    }
+
+    .send-btn {
+        padding: 20px 0;
+        font-size: 16px;
+    }
+
+    .reminders-block {
+        padding: 30px;
+    }
+    .reminders-title {
+        font-size: 22px;
+    }
+
+    .reminders-block table {
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 400px) {
+    .answered-questions {
+        padding: 15px;
+        row-gap: 10px;
+    }
+    .answered-questions-title {
+        font-size: 20px;
+    }
+    .answered-questions button {
+        font-size: 14px;
+        padding: 5px 15px;
+    }
+
+    .subject {
+        font-size: 16px;
+    }
+    .letter-title {
+        font-size: 20px;
+    }
+    .letter-heare-info button {
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+
+
+    .letter-text {
+        font-size: 14px;
+        line-height: 25px;
+    }
+
+    .rewrite-text {
+        font-size: 18px;
+    }
+    .rewrite-option {
+        padding: 15px 20px;
+    }
+    .rewrite-option button {
+        padding: 16px 10px;
+    }
+
+    .reminders-block {
+        padding: 20px;
+    }
+    .reminders-title {
+        font-size: 20px;
+    }
+}

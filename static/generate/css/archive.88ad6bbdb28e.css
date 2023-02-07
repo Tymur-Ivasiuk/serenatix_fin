@@ -1,0 +1,32 @@
+.sorting-archive {
+    display: flex;
+    column-gap: 20px;
+    row-gap: 10px;
+    margin-bottom: 40px;
+}
+
+.sorting-archive > div {
+    min-width: 200px;
+    max-width: 400px;
+}
+
+.sorting-archive > button {
+    border-radius: 8px;
+    padding: 15px 30px;
+    color: #FFF;
+}
+.select_current {
+    margin-left: 0;
+}
+
+@media (max-width: 500px) {
+    .sorting-archive {
+        flex-direction: column;
+    }
+    .sorting-archive > div {
+        max-width: none;
+    }
+    .sorting-archive > button {
+        width: 100%;
+    }
+}

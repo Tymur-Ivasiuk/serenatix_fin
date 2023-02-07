@@ -1,0 +1,288 @@
+{% extends 'generate/main_base.html' %}
+{% load static %}
+{% load generate_tags %}
+
+{% block css_styles %}
+<link rel="stylesheet" href="{% static 'generate/css/letter.css' %}">
+{% endblock %}
+
+
+{% block main %}
+<main class="main">
+<!--    <div class="ads-banner-big">-->
+
+<!--    </div>-->
+    <div class="content-wrap">
+        <div class="content">
+            <div class="answered-questions">
+                <p class="answered-questions-title">
+                    You've answered {{ answers_count }} out of the {{ questions_count }} questions
+                </p>
+                {% if answers_count != questions_count %}
+                    <a href="{% url 'change_questions' content_id=content.id %}">
+                        <button class="magenta-btn">
+                            Answer skipped questions
+                        </button>
+                    </a>
+                {% endif %}
+            </div>
+
+            {% if messages %}
+                {% for i in messages %}
+                    {% if i.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                        <div class="message-main success-msg">
+                            {{ i }}
+                        </div>
+                    {% elif i.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                        <div class="message-main error-msg">
+                            {{ i }}
+                        </div>
+                    {% else %}
+                         <div class="message-main">
+                            {{ i }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            <div class="letter">
+                <div class="letter-heare-info">
+                    <div>
+                        <p class="subject">
+                            Subject
+                        </p>
+                        <h2 class="letter-title">
+                            {{ content.title }}
+                        </h2>
+                    </div>
+                    <a href="{% url 'generate' %}">
+                        <button class="purple-btn">
+                            Edit Subject
+                        </button>
+                    </a>
+                </div>
+
+                <div class="letter-text">
+                    {{ content.text|linebreaksbr }}
+                </div>
+            </div>
+
+            <form class="rewrite-option" method="post">
+                {% csrf_token %}
+
+                <input type="hidden" name="content_type" value="{{ content.content_type }}">
+
+                <p class="rewrite-text">
+                    Rewrite with diferent number of words
+                </p>
+                <div class="rewrite-selects">
+                    <div class="select">
+                        <button type="button" class="select_header" readonly="true">
+                            <div class="select_current">Length</div>
+                            <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                        </button>
+
+                        <ol class="select_list">
+                            {% for i in length %}
+                                <li class="select_item" data-value="{{i.title}}">{{i.title}}</li>
+                            {% endfor %}
+                        </ol>
+                        <input type="text" name="length" value="" class="select_input-hidden">
+                    </div>
+
+                    <div class="select">
+                        <button type="button" class="select_header" readonly="true">
+                            <div class="select_current">Tone</div>
+                            <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                        </button>
+
+                        <ol class="select_list">
+                            {% for i in tones %}
+                                <li class="select_item" data-value="{{i.title}}">{{i.title}}</li>
+                            {% endfor %}
+                        </ol>
+                        <input type="text" name="tone" value="" class="select_input-hidden">
+                    </div>
+
+                    <div class="select">
+                        <button type="button" class="select_header" readonly="true">
+                            <div class="select_current">Style</div>
+                            <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                        </button>
+
+                        <ol class="select_list">
+                            {% for i in styles %}
+                                <li class="select_item" data-value="{{i.title}}">{{i.title}}</li>
+                            {% endfor %}
+                        </ol>
+                        <input type="text" name="style" value="" class="select_input-hidden">
+                    </div>
+                </div>
+                <button class="blue-btn">
+                    Create again
+                </button>
+            </form>
+
+            <div class="send-buttons">
+                <a href="{% url 'send_to_my_email' content.id %}">
+                    <button class="send-btn mg-color">
+                        Send Love Letter To My Email
+                    </button>
+                </a>
+                <a href="{% url 'send_to_my_phone' content.id %}">
+                    <button class="send-btn pr-color">
+                        Send Love Letter To My Mobile
+                    </button>
+                </a>
+                <a href="{% url 'send_to_partner_email' content.id %}">
+                    <button class="send-btn bl-color">
+                        Send Love Letter Your Behalf
+                    </button>
+                </a>
+                <div>
+                    <a onclick="Share.facebook('{{ request.build_absolute_uri }}','{{content.title}}', '{{content.text|get_text_without_n}}')">
+                        <i class="fa-brands fa-facebook share-btn"></i>
+                    </a>
+                    <a onclick="Share.twitter('{{ request.build_absolute_uri }}','{{content.title}}', '{{content.text|get_text_without_n}}')">
+                        <i class="fa-brands fa-twitter share-btn"></i>
+                    </a>
+                </div>
+            </div>
+
+<!--            <div class="reminders">-->
+<!--                <div class="reminders-block">-->
+<!--                    <p class="reminders-title">-->
+<!--                        Set reminders-->
+<!--                    </p>-->
+
+<!--                    <table>-->
+<!--                        <tr>-->
+<!--                            <td>Birthday</td>-->
+<!--                            <td>-->
+<!--                                <div class="input_wrap">-->
+<!--                                    <input type="text" class="generate-input" placeholder="Combo Box" onfocus="(this.type='date')" onblur="(this.type='date')" style="width: 100%;">-->
+<!--                                    <img src="{% static 'generate/img/icon/calendar-purple.svg' %}" alt="pass-icon" class="input-icon dont-event">-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>Anniversary</td>-->
+<!--                            <td>-->
+<!--                                <div class="input_wrap">-->
+<!--                                    <input type="text" class="generate-input" placeholder="Combo Box" onfocus="(this.type='date')" onblur="(this.type='date')" style="width: 100%;">-->
+<!--                                    <img src="{% static 'generate/img/icon/calendar-purple.svg' %}" alt="pass-icon" class="input-icon dont-event">-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>Alert # in advance</td>-->
+<!--                            <td>-->
+<!--                                <div class="select">-->
+<!--                                    <button type="button" class="select_header" readonly="true">-->
+<!--                                        <div class="select_current">Combo Box</div>-->
+<!--                                        <img src="{% static 'generate/img/icon/stroke-small-purple.svg' %}" alt="pass-icon" class="input-icon">-->
+<!--                                    </button>-->
+
+<!--                                    <ol class="select_list">-->
+<!--                                        <li class="select_item" data-value="1">Value 1</li>-->
+<!--                                        <li class="select_item" data-value="2">Value 2</li>-->
+<!--                                        <li class="select_item" data-value="3">Value 3</li>-->
+<!--                                        <li class="select_item" data-value="4">Value 4</li>-->
+<!--                                    </ol>-->
+<!--                                    <input type="text" name="relationship-type" value="" class="select_input-hidden">-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                    </table>-->
+
+<!--                    <div>-->
+<!--                        <button class="blue-btn">-->
+<!--                            Set reminders-->
+<!--                        </button>-->
+<!--                        <button class="magenta-btn">-->
+<!--                            Relationship Autopilot-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="reminders-block">-->
+<!--                    <p class="reminders-title">-->
+<!--                        Just because-->
+<!--                    </p>-->
+
+<!--                    <table>-->
+<!--                        <tr>-->
+<!--                            <td>Time</td>-->
+<!--                            <td>-->
+<!--                                <div class="input_wrap">-->
+<!--                                    <input type="time" class="generate-input" placeholder="Combo Box" style="width: 100%;">-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>Love</td>-->
+<!--                            <td>-->
+<!--                                <div class="select">-->
+<!--                                    <button type="button" class="select_header" readonly="true">-->
+<!--                                        <div class="select_current">Combo Box</div>-->
+<!--                                        <img src="{% static 'generate/img/icon/stroke-small-purple.svg' %}" alt="pass-icon" class="input-icon">-->
+<!--                                    </button>-->
+
+<!--                                    <ol class="select_list">-->
+<!--                                        <li class="select_item" data-value="1">Value 1</li>-->
+<!--                                        <li class="select_item" data-value="2">Value 2</li>-->
+<!--                                        <li class="select_item" data-value="3">Value 3</li>-->
+<!--                                        <li class="select_item" data-value="4">Value 4</li>-->
+<!--                                    </ol>-->
+<!--                                    <input type="text" name="relationship-type" value="" class="select_input-hidden">-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>Cadence</td>-->
+<!--                            <td>-->
+<!--                                <div class="select">-->
+<!--                                    <button type="button" class="select_header" readonly="true">-->
+<!--                                        <div class="select_current">Combo Box</div>-->
+<!--                                        <img src="{% static 'generate/img/icon/stroke-small-purple.svg' %}" alt="pass-icon" class="input-icon">-->
+<!--                                    </button>-->
+
+<!--                                    <ol class="select_list">-->
+<!--                                        <li class="select_item" data-value="1">Value 1</li>-->
+<!--                                        <li class="select_item" data-value="2">Value 2</li>-->
+<!--                                        <li class="select_item" data-value="3">Value 3</li>-->
+<!--                                        <li class="select_item" data-value="4">Value 4</li>-->
+<!--                                    </ol>-->
+<!--                                    <input type="text" name="relationship-type" value="" class="select_input-hidden">-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                    </table>-->
+
+<!--                    <div>-->
+<!--                        <button class="blue-btn">-->
+<!--                            Set reminders-->
+<!--                        </button>-->
+<!--                        <button class="magenta-btn">-->
+<!--                            Relationship Autopilot-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+
+<!--        <div class="ads-banner-side">-->
+<!--        </div>-->
+    </div>
+
+<!--    <div class="ads-banner-big">-->
+
+<!--    </div>-->
+</main>
+{% endblock %}
+
+
+{% block js_scripts %}
+<script src="{% static 'generate/js/fontAwesome.js' %}"></script>
+<script src="{% static 'generate/js/share.js' %}"></script>
+<script src="{% static 'generate/js/select.js' %}"></script>
+{% endblock %}

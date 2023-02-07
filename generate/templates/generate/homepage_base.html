@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'generate/css/styles.css' %}">
+    {% block css_styles %}
+    {% endblock %}
+
+    <title>{{ title }}</title>
+</head>
+<body>
+    <main>
+        <div class="homepage-wrapper">
+            <div class="planeta-big">
+                <img src="{% static 'generate/img/planeta.jpg' %}" style="width: 100%;">
+                <div class="vingette"></div>
+            </div>
+            <div class="right-sidebar-wrap">
+                <div class="right-sidebar">
+                    <img src="{% static 'generate/img/logo-with-text-big.svg' %}" class="right-sidebar_logo">
+                    <div class="planeta-small">
+                        <img src="{% static 'generate/img/planeta.jpg' %}" style="width: 100%;">
+                        <div class="vingette"></div>
+                    </div>
+                    {% block sidebar %}
+
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+<script src="{% static 'generate/js/fontAwesome.js' %}"></script>
+</html>

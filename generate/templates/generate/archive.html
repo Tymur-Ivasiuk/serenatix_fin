@@ -1,0 +1,103 @@
+{% extends 'generate/main_base.html' %}
+{% load static %}
+{% load generate_tags %}
+
+{% block css_styles %}
+<link rel="stylesheet" href="{% static 'generate/css/archive.css' %}">
+{% endblock %}
+
+
+{% block main %}
+<form class="sorting-archive" method="get">
+    <div class="select">
+        <button type="button" class="select_header" readonly="true">
+            {% if get_items.order_by %}
+                <div class="select_current">{{ ordering|get_item:get_items.order_by }}</div>
+            {% else %}
+                <div class="select_current">Sort by</div>
+            {% endif %}
+            <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+        </button>
+
+        <ol class="select_list">
+            {% for i in ordering.items %}
+                <li class="select_item" data-value="{{i.0}}">{{i.1}}</li>
+            {% endfor %}
+        </ol>
+        <input type="text" name="order_by" value="{{get_items.order_by}}" class="select_input-hidden">
+    </div>
+
+    <button class="magenta-btn">
+        Sorting
+    </button>
+</form>
+
+<div class="archive">
+    <div class="archive-title">
+        <p>Archive</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    <div>
+                        Name
+<!--                                        <div class="table-sorting">-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        Type
+<!--                                        <div class="table-sorting">-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        Date
+<!--                                        <div class="table-sorting">-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                            <a href="#!">-->
+<!--                                                <img src="./img/icon/stroke-small.svg">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+                    </div>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in archive %}
+                <tr>
+                    <td>
+                        <a href="{{ i.get_absolute_url }}">
+                            {{ i.title }}
+                        </a>
+                    </td>
+                    <td>{{ i.content_type }}</td>
+                    <td>{{ i.time_create|date:"j F, Y" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+
+{% block js_scripts %}
+<script src="{% static 'generate/js/select.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'generate/homepage_base.html' %}
+{% load static %}
+
+{% block css_styles %}
+<link rel="stylesheet" href="{% static 'generate/css/login.css' %}">
+{% endblock %}
+
+
+{% block sidebar %}
+<div class="blocks">
+    <div class="sidebar_block">
+        <div class="sidebar_block_wrap">
+            <form class="auth" method="post">
+                {% csrf_token %}
+                <div class="auth-title_wrap">
+                    <h2>Login Now!</h2>
+                    <a href="{% url 'register' %}">
+                        Sign up!
+                    </a>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="message">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="auth-inputs">
+                    <div class="input_wrap">
+                        {{ form.username }}
+                        <img src="{% static 'generate/img/icon/email.svg' %}" alt="email-icon" class="input-icon">
+                    </div>
+                    <div class="input_wrap">
+                        {{ form.password }}
+                        <img src="{% static 'generate/img/icon/shield-security.svg' %}" alt="pass-icon" class="input-icon">
+                    </div>
+                </div>
+
+                <div class="auth-actions">
+                    <div class="checkbox-info">
+                        <input type="checkbox" class="save-info-input" name="remember">
+                        <label class="checkbox-desc">Remember me</label>
+                    </div>
+                    <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                </div>
+
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,193 @@
+.auth-title_wrap {
+    width: 100%;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.auth-title_wrap a {
+    width: fit-content;
+    color: #FFF;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 150%;
+}
+
+.auth h2 {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 150%;
+    color: #FFFFFF;
+}
+
+
+.auth-inputs {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    margin-bottom: 30px;
+}
+.input_wrap {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 9px;
+    padding: 15px;
+
+    color: #FFF;
+}
+.auth-input {
+    width: 90%;
+    background: transparent;
+    border: 0;
+    margin-left: 10px;
+
+    color: #FFF;
+}
+.auth-input::placeholder {
+    color: #FFF;
+    opacity: 0.5;
+}
+
+.input-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+}
+
+
+
+.auth-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 50px;
+}
+
+.auth-actions a {
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 16px;
+    color: #FFFFFF;
+}
+
+/* CHECKBOX STYLES */
+.checkbox-info {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+.checkbox-desc {
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 16px;
+    color: #FFFFFF;
+}
+.save-info-input {
+    width: 18px;
+    height: 18px;
+    appearance: none;
+    border: 1px solid #EB3474;
+    border-radius: 5px;
+    margin-right: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.save-info-input:after {
+    content: "\f00c";
+    font-weight: 900;
+    font-family: "Font Awesome 5 Pro";
+    font-size: 12px;
+    color: #FFF;
+    display: none;
+    transition: .3s;
+}
+.save-info-input:hover {
+    transition: 0.3s;
+    background-color: #ff88b1;
+}
+.save-info-input:checked{
+    transition: .2s;
+    background-color: #EB3474;
+}
+.save-info-input:checked:after {
+    display: block;
+}
+/* CHECKBOX STYLES END */
+
+
+
+.auth button[type="submit"] {
+    width: 100%;
+    padding: 16px 20px;
+    background: #006CD3;
+    box-shadow: 0px 30px 60px rgba(0, 108, 211, 0.15);
+    border-radius: 8px;
+
+    color: #FFF;
+}
+
+
+.form-field_erorr {
+    box-sizing: border-box;
+    margin-top: 7px;
+    text-align: center;
+    font-size: 14px;
+    width: 100%;
+    color: red;
+    padding: 0 5px;
+}
+
+
+
+/* ADAPTIVE */
+
+@media (max-width: 425px) {
+    .auth-title_wrap {
+        flex-direction: column;
+        align-items: flex-start;
+        row-gap: 5px;
+    }
+
+    .auth h2 {
+        font-size: 25px;
+    }
+    .checkbox-desc {
+        font-size: 12px;
+    }
+    .auth-actions a {
+        font-size: 12px;
+    }
+    .auth-input {
+        margin-left: 0;
+    }
+    .input_wrap {
+        padding: 10px;
+    }
+    .sidebar_block_wrap {
+        padding: 15px 20px;
+    }
+
+    .form-field_erorr {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 375px) {
+    .auth h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+    .auth-actions {
+        margin-bottom: 35px;
+    }
+
+    .form-field_erorr {
+        font-size: 10px;
+    }
+}
