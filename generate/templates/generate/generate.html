@@ -30,6 +30,24 @@
             {% csrf_token %}
             <table>
                 <tr>
+                    <td>Content type</td>
+                    <td>
+                        <div class="select">
+                            <button type="button" class="select_header" readonly="true">
+                                <div class="select_current">Combo Box</div>
+                                <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                            </button>
+
+                            <ol class="select_list">
+                                {% for i in content_types %}
+                                    <li class="select_item" data-value="{{ i }}">{{ i }}</li>
+                                {% endfor %}
+                            </ol>
+                            {{ form.content_type }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
                     <td>Relationship type</td>
                     <td>
                         <div class="select">
@@ -159,9 +177,7 @@
 
 
             <div class="buttons">
-                <button type="submit" name="type" value="Note" class="magenta-btn">Generate a Love Note</button>
-                <button type="submit" name="type" value="Poem" class="blue-btn">Generate a Poem</button>
-                <button type="submit" name="type" value="Letter" class="purple-btn">Generate a Love Letter</button>
+                <button type="submit" class="purple-btn">Create</button>
             </div>
         </form>
 
@@ -183,7 +199,7 @@
                     <p class="referal-desc">
                         Send credits to friends and create magical love content for each friend who joins
                     </p>
-                    <button class="referal-copy blue-btn">
+                    <button class="referal-copy blue-btn" id="referal" value="{{ url_copy }}">
                         Copy referral link
                     </button>
                 </div>
@@ -354,4 +370,5 @@
 
     }).render('#paypal-button-container');
 </script>
+<script src="{% static 'generate/js/copied.js' %}"></script>
 {% endblock %}

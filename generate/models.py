@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
@@ -7,6 +9,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 from generate.validators import validate_positive
+
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
@@ -23,7 +28,7 @@ class Profile(models.Model):
 
     not_anonim = models.BooleanField(default=False)
 
-    save_answers = models.JSONField(null=True)
+    save_answers = models.JSONField(null=True, default={'answers': ''})
 
     def __str__(self):
         return self.user.email
@@ -33,7 +38,7 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         instance.username = instance.email.split('@')[0]
         instance.save()
-        Profile.objects.create(user=instance)
+        Profile.objects.create(user=instance, credits_count=os.environ.get('REGISTER_ADD_CREDITS', 0))
     else:
         try:
             instance.profile.save()

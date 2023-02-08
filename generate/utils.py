@@ -34,7 +34,7 @@ def create_prompt(info, answers, first_name):
               f'named {info.get("partner_name")} '
               f'who is my {info.get("relationship_type")} '
               f'for the last {calculate_years(info.get("relationship_start_date"))} years. '
-              f'Sign the {info.get("type")} with my name: {first_name}')
+              f'Sign the {info.get("type")} with my name: {first_name}. ')
 
     addition = ''
     if answers:

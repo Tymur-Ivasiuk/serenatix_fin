@@ -162,7 +162,7 @@
                     <p class="referal-desc">
                         Send credits to friends and create magical love content for each friend who joins
                     </p>
-                    <button class="referal-copy blue-btn">
+                    <button class="referal-copy blue-btn" id="referal" value="{{ url_copy }}">
                         Copy referral link
                     </button>
                 </div>
@@ -344,4 +344,5 @@
 
     }).render('#paypal-button-container');
 </script>
+<script src="{% static 'generate/js/copied.js' %}"></script>
 {% endblock %}

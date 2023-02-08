@@ -80,11 +80,14 @@ class GenerateView(FormView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Generate'
 
+        context['content_types'] = ['Letter', 'Poem', 'Note']
         context['poem_styles'] = PoemStyles.objects.all()
         context['letter_styles'] = LetterStyles.objects.all()
         context['tone'] = Tone.objects.all()
         context['occasion'] = Occasion.objects.all()
         context['relationship_types'] = RelationshipTypes.objects.all()
+
+        context['url_copy'] = self.request.build_absolute_uri(reverse('welcome'))
 
         context['paypal'] = os.getenv('PAYPAL_KEY')
 
@@ -98,7 +101,7 @@ class GenerateView(FormView):
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         if form.is_valid():
-            if (request.POST.get('occasion') and request.POST.get('tone') and
+            if (request.POST.get('content_type') and request.POST.get('occasion') and request.POST.get('tone') and
                     request.POST.get('genders') and request.POST.get('relationship_type')):
                 return self.form_valid(form)
             else:
@@ -108,8 +111,9 @@ class GenerateView(FormView):
 
     def form_valid(self, form):
         d = {'Letter': 'letter', 'Poem': 'poem', 'Note': 'note'}
+
         if self.request.user.profile.credits_count < CreditsPrice.objects.filter(
-                credits_type=d.get(self.request.POST.get('type'))).first().credits:
+                credits_type=d.get(self.request.POST.get('content_type'))).first().credits:
             messages.error(self.request, "Sorry, you don't have enough credits")
             return redirect('generate')
         else:
@@ -140,6 +144,7 @@ class QuestionsView(TemplateView):
         context['title'] = 'Questions'
 
         context['questions'] = Questions.objects.all().prefetch_related('answers_set')
+        print(self.request.user.profile.save_answers)
         context['saved_answers'] = self.request.user.profile.save_answers.get('answers', [])
         return context
 
@@ -298,6 +303,8 @@ class AccountView(FormView):
         context['title'] = 'Account'
         context['archive'] = Content.objects.filter(user=self.request.user).order_by('-time_create')[:5]
         context['paypal'] = os.getenv('PAYPAL_KEY')
+
+        context['url_copy'] = self.request.build_absolute_uri(reverse('welcome'))
 
         d = CreditsBuyPriceAndCount.objects.last()
         context['credits_buy'] = d if d else {'credits_count': 50, 'price': 2.00}

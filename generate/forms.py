@@ -45,6 +45,10 @@ class RegisterUserForm(UserCreationForm):
 
 
 class GenerateForm(forms.Form):
+    content_type = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'select_input-hidden', 'placeholder': 'Content type'})
+    )
     relationship_type = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={'class': 'select_input-hidden', 'placeholder': 'Relationship type'})
