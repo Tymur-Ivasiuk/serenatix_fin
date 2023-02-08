@@ -25,7 +25,7 @@ def calculate_years(start_date):
     return difference
 
 def create_prompt(info, answers, first_name):
-    prompt = (f'Write a love {info.get("type")} '
+    prompt = (f'Write a love {info.get("content_type")} '
               f'in a {info.get("letter_style") if info.get("type") != "Poem" else info.get("poem_style")} '
               f'style and {info.get("tone", "romantic")} tone of voice '
               f'using {info.get("length", "500")} words for '
@@ -34,7 +34,7 @@ def create_prompt(info, answers, first_name):
               f'named {info.get("partner_name")} '
               f'who is my {info.get("relationship_type")} '
               f'for the last {calculate_years(info.get("relationship_start_date"))} years. '
-              f'Sign the {info.get("type")} with my name: {first_name}. ')
+              f'Sign the {info.get("content_type")} with my name: {first_name}. ')
 
     addition = ''
     if answers:
@@ -57,18 +57,18 @@ def send_ai_request(info, answers, user):
     prompt = create_prompt(info, answers, user.first_name)
     generated_text = get_ai_response(prompt).strip("\n\n")
 
-    title = f'Your love {info.get("type").lower()} to {info.get("partner_name")}'
+    title = f'Your love {info.get("content_type").lower()} to {info.get("partner_name")}'
 
     content = Content.objects.create(
         user=user,
-        content_type=info.get('type').lower(),
+        content_type=info.get('content_type').lower(),
         title=title,
         text=generated_text,
         prompt=prompt,
         answers=answers,
         content_info=info
     )
-    user.profile.credits_count -= CreditsPrice.objects.get(credits_type=info.get("type").lower()).credits
+    user.profile.credits_count -= CreditsPrice.objects.get(credits_type=info.get("content_type").lower()).credits
     user.save()
 
     return content.get_absolute_url()

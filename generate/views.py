@@ -144,7 +144,6 @@ class QuestionsView(TemplateView):
         context['title'] = 'Questions'
 
         context['questions'] = Questions.objects.all().prefetch_related('answers_set')
-        print(self.request.user.profile.save_answers)
         context['saved_answers'] = self.request.user.profile.save_answers.get('answers', [])
         return context
 
