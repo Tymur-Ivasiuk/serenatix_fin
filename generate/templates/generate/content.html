@@ -118,7 +118,7 @@
                         <input type="text" name="style" value="" class="select_input-hidden">
                     </div>
                 </div>
-                <button class="blue-btn">
+                <button class="blue-btn" id="finish">
                     Create again
                 </button>
             </form>
@@ -278,6 +278,11 @@
 
 <!--    </div>-->
 </main>
+
+<div id="preloader" class="disable-load">
+    <div id="loader"></div>
+    <p>Generating ...</p>
+</div>
 {% endblock %}
 
 
@@ -285,4 +290,6 @@
 <script src="{% static 'generate/js/fontAwesome.js' %}"></script>
 <script src="{% static 'generate/js/share.js' %}"></script>
 <script src="{% static 'generate/js/select.js' %}"></script>
+
+<script src="{% static 'generate/js/ajaxGenerate.js' %}"></script>
 {% endblock %}

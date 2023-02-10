@@ -1,5 +1,6 @@
 from django.contrib import admin
 from adminsortable2.admin import SortableAdminBase, SortableTabularInline, SortableAdminMixin
+from import_export.admin import ExportActionMixin
 
 from .models import *
 
@@ -53,8 +54,11 @@ class RelationshipTypesAdmin(admin.ModelAdmin):
     list_display = ['title']
 
 
+class ContentAdmin(ExportActionMixin, admin.ModelAdmin):
+    actions = ["export_as_csv"]
+
 admin.site.register(Profile)
-admin.site.register(Content)
+admin.site.register(Content, ContentAdmin)
 admin.site.register(Questions, QuestionsAdmin)
 admin.site.register(CreditsPrice)
 admin.site.register(RelationshipTypes, RelationshipTypesAdmin)

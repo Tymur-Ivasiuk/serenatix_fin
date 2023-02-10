@@ -70,7 +70,7 @@
                 <button name="save" value="on" class="blue-btn">
                     SAVE
                 </button>
-                <button name="finish" value="on" class="magenta-btn">
+                <button id="finish" name="finish" value="on" class="magenta-btn">
                     Finished
                 </button>
             </div>
@@ -78,6 +78,11 @@
 
     </form>
 </main>
+
+<div id="preloader" class="disable-load">
+    <div id="loader"></div>
+    <p>Generating ...</p>
+</div>
 {% endblock %}
 
 
@@ -87,4 +92,6 @@
 <script src="{% static 'generate/js/slick.min.js' %}"></script>
 <script src="{% static 'generate/js/slider.js' %}"></script>
 <script src="{% static 'generate/js/otherAnswer.js' %}"></script>
+
+<script src="{% static 'generate/js/ajaxGenerate.js' %}"></script>
 {% endblock %}

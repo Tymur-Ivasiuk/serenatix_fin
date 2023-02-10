@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'twilio',
     'adminsortable2',
+    'import_export',
 ]
 
 MIDDLEWARE = [
