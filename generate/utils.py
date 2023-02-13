@@ -57,19 +57,19 @@ def send_ai_request(info, answers, user):
     info['content_type'] = content_type.title
 
     prompt = create_prompt(info, answers, user.first_name)
-    # generated_text = get_ai_response(prompt).strip("\n\n")
+    generated_text = get_ai_response(prompt).strip("\n\n")
 
     title = f'Your love {info.get("content_type").lower()} to {info.get("partner_name")}'
 
-    # content = Content.objects.create(
-    #     user=user,
-    #     content_type=content_type,
-    #     title=title,
-    #     text=generated_text,
-    #     prompt=prompt,
-    #     answers=answers,
-    #     content_info=info
-    # )
+    content = Content.objects.create(
+        user=user,
+        content_type=content_type,
+        title=title,
+        text=generated_text,
+        prompt=prompt,
+        answers=answers,
+        content_info=info
+    )
     user.profile.credits_count -= content_type.credits
     user.save()
 
