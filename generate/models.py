@@ -180,9 +180,13 @@ class Questions(models.Model):
     is_publish = models.BooleanField(default=False)
     have_answers = models.BooleanField(default=True)
 
+    my_order = models.PositiveSmallIntegerField(default=0, blank=False, null=False, db_index=True)
+
     def __str__(self):
         return self.question
 
+    class Meta:
+        ordering = ['my_order']
 
 class Answers(models.Model):
     answer = models.CharField(max_length=255)

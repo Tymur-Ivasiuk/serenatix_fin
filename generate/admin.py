@@ -10,9 +10,11 @@ class AnswersInlines(SortableTabularInline, admin.TabularInline):
     extra = 0
 
 
-class QuestionsAdmin(SortableAdminBase, admin.ModelAdmin):
-    search_fields = ['title']
-    list_per_page = 20
+class QuestionsAdmin(SortableAdminMixin, SortableAdminBase, admin.ModelAdmin):
+    search_fields = ['question']
+
+    list_display = ['question', 'my_order']
+    ordering = ['my_order']
 
     inlines = [
         AnswersInlines
@@ -21,26 +23,26 @@ class QuestionsAdmin(SortableAdminBase, admin.ModelAdmin):
 
 
 @admin.register(Length)
-class LengthAdmin(admin.ModelAdmin):
-    fields = ['title']
-    list_display = ['title']
+class LengthAdmin(SortableAdminMixin, admin.ModelAdmin):
+    list_display = ['title', 'my_order']
+    ordering = ['my_order']
 
 
 @admin.register(Tone)
-class ToneAdmin(admin.ModelAdmin):
-    fields = ['title']
-    list_display = ['title']
+class ToneAdmin(SortableAdminMixin, admin.ModelAdmin):
+    list_display = ['title', 'my_order']
+    ordering = ['my_order']
 
 
 @admin.register(Occasion)
-class OccasionAdmin(admin.ModelAdmin):
-    fields = ['title']
-    list_display = ['title']
+class OccasionAdmin(SortableAdminMixin, admin.ModelAdmin):
+    list_display = ['title', 'my_order']
+    ordering = ['my_order']
 
 
-class RelationshipTypesAdmin(admin.ModelAdmin):
-    fields = ['title']
-    list_display = ['title']
+class RelationshipTypesAdmin(SortableAdminMixin, admin.ModelAdmin):
+    list_display = ['title', 'my_order']
+    ordering = ['my_order']
 
 
 class ContentAdmin(ExportActionMixin, admin.ModelAdmin):
