@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'generate.apps.GenerateConfig',
     'phonenumber_field',
-    'twilio',
     'adminsortable2',
     'import_export',
 ]
