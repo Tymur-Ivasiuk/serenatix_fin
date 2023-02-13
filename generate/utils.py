@@ -61,6 +61,8 @@ def send_ai_request(info, answers, user):
 
     title = f'Your love {info.get("content_type").lower()} to {info.get("partner_name")}'
 
+    info['content_type'] = content_type.id
+
     content = Content.objects.create(
         user=user,
         content_type=content_type,
