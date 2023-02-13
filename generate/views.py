@@ -1,5 +1,6 @@
 import json
 import os
+import uuid
 
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -24,6 +25,13 @@ class WelcomeView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Welcome'
 
+        context['SCRIPT'] = ScriptsHead.objects.first()
+
+        if self.request.user.is_authenticated:
+            context['url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
+        else:
+            context['url_copy'] = self.request.build_absolute_uri(reverse("welcome"))
+
         return context
 
 
@@ -38,13 +46,20 @@ class LoginUser(LoginView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['SCRIPT'] = ScriptsHead.objects.first()
         context['title'] = 'Login'
         return context
 
     def form_valid(self, form):
+        user = form.get_user()
         if not self.request.POST.get('remember', None):
             self.request.session.set_expiry(0)
-        return super().form_valid(form)
+        if not user.profile.email_verify:
+            messages.error(self.request, 'Please verify your email')
+            return redirect('login')
+        else:
+            return super().form_valid(form)
+
 
     def get_success_url(self):
         return reverse_lazy('generate')
@@ -60,11 +75,77 @@ class RegisterUser(CreateView):
     form_class = RegisterUserForm
     success_url = reverse_lazy('login')
 
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect('generate')
+        return super(RegisterUser, self).dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Register'
+        context['SCRIPT'] = ScriptsHead.objects.first()
 
         return context
+
+
+    def post(self, request, *args, **kwargs):
+        form = RegisterUserForm(self.request.POST)
+        print(request.GET)
+        if form.is_valid():
+            user = form.save()
+
+            auth_token = generate_auth_token()
+
+            profile = Profile.objects.get_or_create(user=user)
+            profile[0].email_code = auth_token
+
+
+            if request.GET.get('referral'):
+                k = Profile.objects.get(referral_code=request.GET.get('referral'))
+                if k:
+                    profile[0].credits_count += int(os.environ.get('REFERRAL_NEW_USER_CREDITS_PLUS', 200))
+                    k.credits_count += int(os.environ.get('REFERRAL_OLD_USER_CREDITS_PLUS', 200))
+                    k.save()
+
+            profile[0].save()
+
+            send_email_verify(user.email, auth_token)
+            messages.success(request, 'An email has been sent to your email. Please verify your email address')
+            return redirect('login')
+        else:
+            return render(request, self.template_name, {'form': form})
+
+
+def send_email_verify(email, token):
+    subject = 'Your accounts need to be verified'
+
+    message = 'Hi! Paste the link to verify your account <br><br>'
+    if os.environ.get("WEBSITE_HOSTNAME"):
+        message += f'https://{os.environ.get("WEBSITE_HOSTNAME")}/verify/{token}'
+    else:
+        message += f'http://127.0.0.1:8000/verify/{token}'
+
+    recipient_list = [email]
+    SendMyEmails(subject, message, recipient_list).start()
+
+def verify(request, email_code):
+    try:
+        profile = Profile.objects.filter(email_code=email_code).first()
+    except:
+        messages.error(request, 'Something went wrong')
+        return redirect('login')
+
+    if profile:
+        if profile.email_verify:
+            messages.success(request, 'Your email has already been verified')
+            return redirect('login')
+        profile.email_verify = True
+        profile.save()
+        messages.success(request, 'Your account has been successfully verified')
+    else:
+        messages.error(request, 'Something went wrong')
+
+    return redirect('login')
 
 
 class GenerateView(FormView):
@@ -80,14 +161,26 @@ class GenerateView(FormView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Generate'
 
-        context['content_types'] = ['Letter', 'Poem', 'Note']
-        context['poem_styles'] = PoemStyles.objects.all()
-        context['letter_styles'] = LetterStyles.objects.all()
+        context['SCRIPT'] = ScriptsHead.objects.first()
+
+        context['get_items'] = self.request.session.get('generate_info', {})
+        if not context['get_items']:
+            context['get_items'] = self.request.user.profile.save_answers.get('form_answers', {})
+
+        if not context['get_items'].get('partner_name'):
+            context['get_items']['partner_name'] = self.request.user.profile.partner_name
+
+        context['content_types'] = ContentTypes.objects.all()
+        if context['get_items'].get('content_type'):
+            context['current_content_type'] = context['content_types'].get(id=context['get_items'].get('content_type')).title
+
+        context['styles'] = ContentStyles.objects.all()
         context['tone'] = Tone.objects.all()
         context['occasion'] = Occasion.objects.all()
         context['relationship_types'] = RelationshipTypes.objects.all()
+        context['relationship_date'] = [datetime.today().year - i for i in range(80)]
 
-        context['url_copy'] = self.request.build_absolute_uri(reverse('welcome'))
+        context['url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
 
         context['paypal'] = os.getenv('PAYPAL_KEY')
 
@@ -99,7 +192,7 @@ class GenerateView(FormView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = self.get_form()
+        form = GenerateForm({k: v for k, v in request.POST.items() if k not in {'csrfmiddlewaretoken'}})
         if form.is_valid():
             if (request.POST.get('content_type') and request.POST.get('occasion') and request.POST.get('tone') and
                     request.POST.get('genders') and request.POST.get('relationship_type')):
@@ -110,10 +203,8 @@ class GenerateView(FormView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        d = {'Letter': 'letter', 'Poem': 'poem', 'Note': 'note'}
-
-        if self.request.user.profile.credits_count < CreditsPrice.objects.filter(
-                credits_type=d.get(self.request.POST.get('content_type'))).first().credits:
+        if self.request.user.profile.credits_count < ContentTypes.objects.filter(
+                id=self.request.POST.get('content_type')).first().credits:
             messages.error(self.request, "Sorry, you don't have enough credits")
             return redirect('generate')
         else:
@@ -143,22 +234,28 @@ class QuestionsView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Questions'
 
-        context['questions'] = Questions.objects.all().prefetch_related('answers_set')
+        context['SCRIPT'] = ScriptsHead.objects.first()
+
+        print(self.request.session['generate_info'])
+
+        context['questions'] = Questions.objects.filter(is_publish=True,
+                                                        content_type=self.request.session['generate_info'].get('content_type')).prefetch_related('answers_set')
         context['saved_answers'] = self.request.user.profile.save_answers.get('answers', [])
         return context
 
     def post(self, request, *args, **kwargs):
         if request.POST.get('save'):
             answers = []
+            form_answers = request.session.get('generate_info')
             for i in dict(request.POST).items():
                 try:
                     int(i[0])
                     answers += i[1]
                 except:
                     pass
-            request.user.profile.save_answers = {'answers': answers}
+            request.user.profile.save_answers = {'answers': answers, 'form_answers': form_answers}
             request.user.profile.save()
-            messages.success(request, 'Your checkbox answers have been saved')
+            messages.success(request, 'All answers are saved')
             return redirect('generate')
         else:
             dict_answers = {k: v for k, v in dict(self.request.POST).items() if k not in {'csrfmiddlewaretoken',
@@ -183,13 +280,13 @@ class ContentView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = context['content'].title
+        context['ADD_FLOWER_LINK'] = os.environ.get('ADD_FLOWER_LINK')
+
+        context['SCRIPT'] = ScriptsHead.objects.first()
 
         context['length'] = Length.objects.all()
         context['tones'] = Tone.objects.all()
-        if context['content'].content_type == 'poem':
-            context['styles'] = PoemStyles.objects.all()
-        else:
-            context['styles'] = LetterStyles.objects.all()
+        context['styles'] = ContentStyles.objects.filter(content_type=kwargs['object'].content_type)
 
         context['answers_count'] = len(context['content'].answers.keys())
         context['questions_count'] = Questions.objects.all().count()
@@ -197,24 +294,29 @@ class ContentView(DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
-        if request.POST.get('length') or request.POST.get('styles') or request.POST.get('tones'):
-            if self.request.user.profile.credits_count < CreditsPrice.objects.filter(
-                    credits_type=request.POST.get('content_type')).first().credits:
+        print(request.POST)
+        if request.POST.get('length') or request.POST.get('style') or request.POST.get('tone'):
+            if self.request.user.profile.credits_count < ContentTypes.objects.filter(
+                    title=request.POST.get('content_type')).first().credits:
                 messages.error(request, "Sorry, you don't have enough credits")
                 return redirect('generate')
 
-            dict_info_content = Content.objects.get(id=self.kwargs.get('content_id')).content_info
+            content = Content.objects.get(id=self.kwargs.get('content_id'))
+            dict_info_content = content.content_info
+            dict_info_content['content_type'] = content.id
             dict_info_content['length'] = request.POST.get('length')
             dict_info_content['tones'] = request.POST.get('tones')
             if dict_info_content.get('type') == 'Poem':
                 dict_info_content['poem_style'] = request.POST.get('style')
             else:
                 dict_info_content['letter_style'] = request.POST.get('style')
+
             ss = send_ai_request(dict_info_content,
                                  Content.objects.get(id=kwargs['content_id']).answers,
                                  request.user)
             return redirect(ss)
 
+        print("VPVV")
         return redirect(request.path)
 
 
@@ -226,9 +328,10 @@ class ArchiveView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Archive'
+        context['SCRIPT'] = ScriptsHead.objects.first()
         context['ordering'] = {
-            '-time_create': 'First new',
-            'time_create': 'First old',
+            '-time_create': 'Latest first',
+            'time_create': 'Oldest first',
             'title': 'A -> Z',
             '-title': 'Z -> A',
             'content_type': 'Type A -> Z',
@@ -247,9 +350,7 @@ class ArchiveView(ListView):
 
 def change_questions(request, content_id):
     content = Content.objects.get(id=content_id)
-
-    if request.user.profile.credits_count < CreditsPrice.objects.filter(
-            credits_type=content.content_type).first().credits:
+    if request.user.profile.credits_count < content.content_type.credits:
         messages.error(request, "Sorry, you don't have enough credits")
         return redirect('generate')
     else:
@@ -290,11 +391,10 @@ class AccountView(FormView):
         info = {**user_dict, **profile_dict}
         d = {}
         for i in info:
-            if i in ['first_name', 'last_name', 'email', 'phone_number', 'partner_email', 'partner_phone_number']:
+            if i in ['first_name', 'last_name', 'email', 'partner_email', 'partner_name']:
                 d[i] = info[i]
 
         kwargs['initial'] = d
-        print(d)
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -302,8 +402,9 @@ class AccountView(FormView):
         context['title'] = 'Account'
         context['archive'] = Content.objects.filter(user=self.request.user).order_by('-time_create')[:5]
         context['paypal'] = os.getenv('PAYPAL_KEY')
+        context['SCRIPT'] = ScriptsHead.objects.first()
 
-        context['url_copy'] = self.request.build_absolute_uri(reverse('welcome'))
+        context['url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
 
         d = CreditsBuyPriceAndCount.objects.last()
         context['credits_buy'] = d if d else {'credits_count': 50, 'price': 2.00}
@@ -317,9 +418,8 @@ class AccountView(FormView):
         self.request.user.email = data.get('email')
         self.request.user.save()
 
-        self.request.user.profile.phone_number = data.get('phone_number')
         self.request.user.profile.partner_email = data.get('partner_email')
-        self.request.user.profile.partner_phone_number = data.get('partner_phone_number')
+        self.request.user.profile.partner_name = data.get('partner_name')
         self.request.user.profile.save()
 
         return super().form_valid(form)
@@ -332,7 +432,7 @@ class ChangePasswordView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Change Password'
-
+        context['SCRIPT'] = ScriptsHead.objects.first()
         return context
 
     def get_form_kwargs(self):
@@ -349,23 +449,48 @@ class ChangePasswordReset(PasswordResetView):
     template_name = 'generate/reset_password.html'
     form_class = ResetPasswordEmail
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['SCRIPT'] = ScriptsHead.objects.first()
+        return context
+
 
 class ChangePasswordResetDone(PasswordResetDoneView):
     template_name = 'generate/reset_password_done.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['SCRIPT'] = ScriptsHead.objects.first()
+        return context
 
 
 class ChangePasswordResetConfirm(PasswordResetConfirmView):
     template_name = 'generate/reset_password_confirm.html'
     form_class = SetPassword
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['SCRIPT'] = ScriptsHead.objects.first()
+        return context
+
 
 class ChangePasswordResetComplete(PasswordResetCompleteView):
     template_name = 'generate/reset_password_complete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['SCRIPT'] = ScriptsHead.objects.first()
+        return context
 
 
 class ContactView(FormView):
     template_name = 'generate/contact.html'
     form_class = ContactForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['SCRIPT'] = ScriptsHead.objects.first()
+        return context
 
     def post(self, request, *args, **kwargs):
         form = ContactForm(request.POST)
@@ -392,25 +517,6 @@ def send_to_my_email(request, content_id):
 
     SendMyEmails(content.title, content.text.replace('\n', '<br>'), [content.user.email]).start()
     messages.success(request, "Your letter has been sent to your mail")
-
-    return redirect('content', content_id=content_id)
-
-
-def send_to_my_phone(request, content_id):
-    if request.user.is_authenticated:
-        content = Content.objects.get(id=content_id)
-        if request.user != content.user:
-            messages.error(request, "You can't send this content")
-            return redirect('generate')
-
-        if not request.user.profile.phone_number:
-            messages.info(request, "Please enter your phone number")
-            return redirect('account')
-    else:
-        return redirect('login')
-
-    SmsThread(request.user.profile.phone_number, content.title, content.text).start()
-    messages.success(request, "We have sent an SMS to your phone number")
 
     return redirect('content', content_id=content_id)
 

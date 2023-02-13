@@ -83,23 +83,6 @@
                         </td>
                     </tr>
                 {% endif %}
-
-                <tr>
-                    <td>Phone number</td>
-                    <td>
-                        <div class="input_wrap">
-                            {{ form.phone_number }}
-                        </div>
-                    </td>
-                </tr>
-                {% if form.phone_number.errors %}
-                    <tr>
-                        <td colspan="2" class="form-error">
-                            {{ form.phone_number.errors }}
-                        </td>
-                    </tr>
-                {% endif %}
-
                 <tr>
                     <td colspan="2" class="partner-info">
                         Partner info
@@ -122,17 +105,17 @@
                 {% endif %}
 
                 <tr>
-                    <td>Partner phone</td>
+                    <td>Partner name</td>
                     <td>
                         <div class="input_wrap">
-                            {{ form.partner_phone }}
+                            {{ form.partner_name }}
                         </div>
                     </td>
                 </tr>
-                {% if form.partner_phone.errors %}
+                {% if form.partner_name.errors %}
                     <tr>
                         <td colspan="2" class="form-error">
-                            {{form.partner_phone.errors}}
+                            {{form.partner_name.errors}}
                         </td>
                     </tr>
                 {% endif %}
@@ -162,7 +145,7 @@
                     <p class="referal-desc">
                         Send credits to friends and create magical love content for each friend who joins
                     </p>
-                    <button class="referal-copy blue-btn" id="referal" value="{{ url_copy }}">
+                    <button class="referal-copy blue-btn" id="referral" value="{{ url_copy }}">
                         Copy referral link
                     </button>
                 </div>

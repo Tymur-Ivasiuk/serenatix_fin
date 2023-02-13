@@ -1,5 +1,5 @@
 body {
-    background-image: url(../img/bg.svg);
+    background-image: url("../img/bg.3d6c36e1331f.svg");
     background-repeat: repeat-x;
     background-size: unset;
 }
@@ -133,7 +133,7 @@ body {
     right: 11px;
     transform: translateY(-46%);
 
-    background: url(../img/icon/calendar.svg) no-repeat;
+    background: url("../img/icon/calendar.96037767ef38.svg") no-repeat;
     width: 27px;
     height: 27px;
 }

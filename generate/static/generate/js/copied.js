@@ -1,6 +1,6 @@
-var referalBtn = document.querySelector('#referal')
+var referralBtn = document.querySelector('#referral')
 
-referalBtn.addEventListener('click', (e) => {
+referralBtn.addEventListener('click', (e) => {
     navigator.clipboard.writeText(e.target.value)
     e.target.textContent = 'Copied'
 })

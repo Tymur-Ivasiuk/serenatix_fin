@@ -1,5 +1,6 @@
 {% extends 'generate/main_base.html' %}
 {% load static %}
+{% load generate_tags %}
 
 {% block main %}
 <main class="main">
@@ -34,16 +35,20 @@
                     <td>
                         <div class="select">
                             <button type="button" class="select_header" readonly="true">
-                                <div class="select_current">Combo Box</div>
+                                {% if get_items|get_item:"content_type" %}
+                                    <div class="select_current" style="opacity: 1;">{{ current_content_type }}</div>
+                                {% else %}
+                                    <div class="select_current">Combo Box</div>
+                                {% endif %}
                                 <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
                             </button>
 
-                            <ol class="select_list">
+                            <ol class="select_list" id="content_type_list">
                                 {% for i in content_types %}
-                                    <li class="select_item" data-value="{{ i }}">{{ i }}</li>
+                                    <li class="select_item" data-value="{{ i.id }}">{{ i }}</li>
                                 {% endfor %}
                             </ol>
-                            {{ form.content_type }}
+                            <input type="hidden" name="content_type" value="{{get_items|get_item:'content_type'}}" class="select_input-hidden" id="id_content_type">
                         </div>
                     </td>
                 </tr>
@@ -52,7 +57,11 @@
                     <td>
                         <div class="select">
                             <button type="button" class="select_header" readonly="true">
-                                <div class="select_current">Combo Box</div>
+                                {% if get_items|get_item:"relationship_type" %}
+                                    <div class="select_current" style="opacity: 1;">{{ get_items|get_item:"relationship_type" }}</div>
+                                {% else %}
+                                    <div class="select_current">Combo Box</div>
+                                {% endif %}
                                 <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
                             </button>
 
@@ -61,7 +70,7 @@
                                     <li class="select_item" data-value="{{ i.title }}">{{ i.title }}</li>
                                 {% endfor %}
                             </ol>
-                            {{ form.relationship_type }}
+                            <input type="hidden" name="relationship_type" value="{{get_items|get_item:'relationship_type'}}" class="select_input-hidden" id="id_relationship_type">
                         </div>
                     </td>
                 </tr>
@@ -69,16 +78,33 @@
                     <td>Partner name</td>
                     <td>
                         <div class="input_wrap">
-                            {{ form.partner_name }}
+                            {% if get_items|get_item:'partner_name' %}
+                                <input type="text" name="partner_name" value="{{get_items|get_item:'partner_name'}}" class="generate-input" placeholder="Partner name" required="true" id="id_partner_name">
+                            {% else %}
+                                <input type="text" name="partner_name" class="generate-input" placeholder="Partner name" required="true" id="id_partner_name">
+                            {% endif %}
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Relationship start date</td>
                     <td>
-                        <div class="input_wrap">
-                            {{ form.relationship_start_date }}
-                            <img src="{% static 'generate/img/icon/calendar.svg' %}" alt="pass-icon" class="input-icon dont-event">
+                        <div class="select">
+                            <button type="button" class="select_header" readonly="true">
+                                {% if get_items|get_item:"relationship_start_date" %}
+                                    <div class="select_current" style="opacity: 1;">{{ get_items|get_item:"relationship_start_date" }}</div>
+                                {% else %}
+                                    <div class="select_current">Combo Box</div>
+                                {% endif %}
+                                <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
+                            </button>
+
+                            <ol class="select_list">
+                                {% for i in relationship_date %}
+                                    <li class="select_item" data-value="{{ i }}">{{ i }}</li>
+                                {% endfor %}
+                            </ol>
+                            <input type="hidden" name="relationship_start_date" value="{{get_items|get_item:'relationship_start_date'}}" class="select_input-hidden" id="id_relationship_start_date">
                         </div>
                     </td>
                 </tr>
@@ -87,7 +113,11 @@
                     <td>
                         <div class="select">
                             <button type="button" class="select_header" readonly="true">
-                                <div class="select_current">Combo Box</div>
+                                {% if get_items|get_item:"occasion" %}
+                                    <div class="select_current" style="opacity: 1;">{{ get_items|get_item:"occasion" }}</div>
+                                {% else %}
+                                    <div class="select_current">Combo Box</div>
+                                {% endif %}
                                 <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
                             </button>
 
@@ -96,43 +126,29 @@
                                     <li class="select_item" data-value="{{ i.title }}">{{ i.title }}</li>
                                 {% endfor %}
                             </ol>
-                            {{ form.occasion }}
+                            <input type="hidden" name="occasion" value="{{get_items|get_item:'occasion'}}" class="select_input-hidden" id="id_occasion">
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>Poem style</td>
+                    <td>Style</td>
                     <td>
                         <div class="select">
                             <button type="button" class="select_header" readonly="true">
-                                <div class="select_current">Combo Box</div>
+                                {% if get_items|get_item:"style" %}
+                                    <div class="select_current" style="opacity: 1;">{{ get_items|get_item:"style" }}</div>
+                                {% else %}
+                                    <div class="select_current">Combo Box</div>
+                                {% endif %}
                                 <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
                             </button>
 
-                            <ol class="select_list">
-                                {% for i in poem_styles %}
-                                    <li class="select_item" data-value="{{ i.title }}">{{ i.title }}</li>
+                            <ol class="select_list" id="content_styles_list">
+                                {% for i in styles %}
+                                    <li class="select_item" style="display: none;" data-value="{{ i.title }}" name="{{ i.content_type }}">{{ i.title }}</li>
                                 {% endfor %}
                             </ol>
-                            {{ form.poem_style }}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Letter style</td>
-                    <td>
-                        <div class="select">
-                            <button type="button" class="select_header" readonly="true">
-                                <div class="select_current">Combo Box</div>
-                                <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
-                            </button>
-
-                            <ol class="select_list">
-                                {% for i in letter_styles %}
-                                    <li class="select_item" data-value="{{ i.title }}">{{ i.title }}</li>
-                                {% endfor %}
-                            </ol>
-                            {{ form.letter_style }}
+                            <input type="hidden" name="style" value="{{get_items|get_item:'style'}}" class="select_input-hidden" id="id_style">
                         </div>
                     </td>
                 </tr>
@@ -141,7 +157,11 @@
                     <td>
                         <div class="select">
                             <button type="button" class="select_header" readonly="true">
-                                <div class="select_current">Combo Box</div>
+                                {% if get_items|get_item:"tone" %}
+                                    <div class="select_current" style="opacity: 1;">{{ get_items|get_item:"tone" }}</div>
+                                {% else %}
+                                    <div class="select_current">Combo Box</div>
+                                {% endif %}
                                 <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
                             </button>
 
@@ -150,7 +170,7 @@
                                     <li class="select_item" data-value="{{ i.title }}">{{ i.title }}</li>
                                 {% endfor %}
                             </ol>
-                            {{ form.tone }}
+                            <input type="hidden" name="tone" value="{{get_items|get_item:'tone'}}" class="select_input-hidden" id="id_tone">
                         </div>
                     </td>
                 </tr>
@@ -159,7 +179,11 @@
                     <td>
                         <div class="select">
                             <button type="button" class="select_header" readonly="true">
-                                <div class="select_current">Combo Box</div>
+                                {% if get_items|get_item:"genders" %}
+                                    <div class="select_current" style="opacity: 1;">{{ get_items|get_item:"genders" }}</div>
+                                {% else %}
+                                    <div class="select_current">Combo Box</div>
+                                {% endif %}
                                 <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
                             </button>
 
@@ -169,7 +193,8 @@
                                 <li class="select_item" data-value="Male writing to a Male">Male writing to a Male</li>
                                 <li class="select_item" data-value="Female writing to Female">Female writing to Female</li>
                             </ol>
-                            {{ form.genders }}
+
+                            <input type="hidden" name="genders" value="{{get_items|get_item:'genders'}}" class="select_input-hidden" id="id_genders">
                         </div>
                     </td>
                 </tr>
@@ -199,7 +224,7 @@
                     <p class="referal-desc">
                         Send credits to friends and create magical love content for each friend who joins
                     </p>
-                    <button class="referal-copy blue-btn" id="referal" value="{{ url_copy }}">
+                    <button class="referal-copy blue-btn" id="referral" value="{{ url_copy }}">
                         Copy referral link
                     </button>
                 </div>
@@ -370,5 +395,6 @@
 
     }).render('#paypal-button-container');
 </script>
+<script src="{% static 'generate/js/contentStyles.js' %}"></script>
 <script src="{% static 'generate/js/copied.js' %}"></script>
 {% endblock %}

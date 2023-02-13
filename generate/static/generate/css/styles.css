@@ -534,13 +534,16 @@ body {
     text-align: center;
     margin-bottom: 20px;
     border-radius: 8px;
-    border: 2px solid red;
+    border: 2px solid gray;
     font-size: 14px;
-
 }
 
 .error-message {
     border-color: red;
+}
+
+.success-message {
+    border-color: green;
 }
 
 

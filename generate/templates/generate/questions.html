@@ -32,26 +32,40 @@
                     {{ i.question }}
                 </h2>
                 <div class="answers-table">
-                    {% for j in i.answers_set.all %}
+                    {% if i.have_answers %}
+                        {% for j in i.answers_set.all %}
+                            <div class="checkbox-info">
+                                {% if j.answer in saved_answers %}
+                                    <input type="checkbox" checked name="{{i.id}}" value="{{ j.answer }}" class="save-info-input">
+                                {% else %}
+                                    <input type="checkbox" name="{{i.id}}" value="{{ j.answer }}" class="save-info-input">
+                                {% endif %}
+                                <label class="checkbox-desc">{{ j.answer }}</label>
+                            </div>
+                        {% endfor %}
+
                         <div class="checkbox-info">
-                            {% if j.answer in saved_answers %}
-                                <input type="checkbox" checked name="{{i.id}}" value="{{ j.answer }}" class="save-info-input">
-                            {% else %}
-                                <input type="checkbox" name="{{i.id}}" value="{{ j.answer }}" class="save-info-input">
-                            {% endif %}
-                            <label class="checkbox-desc">{{ j.answer }}</label>
+                            <p class="checkbox-desc">Your answer</p>
                         </div>
-                    {% endfor %}
+                        <div class="input_wrap" style="margin-left: 0;">
+                            <input type="text" name="{{i.id}}" class="answer-input" placeholder="Enter any other answer">
+                        </div>
+                    {% else %}
+                        <ul>
+                        {% for j in i.answers_set.all %}
+                            <li class="checkbox-info">
+                                <p class="checkbox-desc">{{ j.answer }}</p>
+                            </li>
+                        {% endfor %}
+                        </ul>
 
-
-                    <div class="checkbox-info other-answer">
-                        <input type="checkbox" class="save-info-input">
-                        <label class="checkbox-desc">Any Other?</label>
-
-                    </div>
-                    <div class="input_wrap">
-                        <input type="text" name="{{i.id}}" class="answer-input" disabled placeholder="Enter any other anser">
-                    </div>
+                        <div class="checkbox-info">
+                            <p class="checkbox-desc">Your answer</p>
+                        </div>
+                        <div class="input_wrap" style="margin-left: 0;">
+                            <input type="text" name="{{i.id}}" class="answer-input" placeholder="Enter any other answer">
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -91,7 +105,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 <script src="{% static 'generate/js/slick.min.js' %}"></script>
 <script src="{% static 'generate/js/slider.js' %}"></script>
-<script src="{% static 'generate/js/otherAnswer.js' %}"></script>
-
+<script src="{% static 'generate/js/generatingText.js' %}"></script>
 <script src="{% static 'generate/js/ajaxGenerate.js' %}"></script>
 {% endblock %}

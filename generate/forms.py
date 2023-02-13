@@ -2,8 +2,9 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm, SetPasswordForm, \
     PasswordResetForm
-from django.contrib.auth.models import User
 from phonenumber_field.formfields import PhoneNumberField
+
+from generate.models import User
 
 
 class LoginUserForm(AuthenticationForm):
@@ -57,23 +58,17 @@ class GenerateForm(forms.Form):
         required=True,
         widget=forms.TextInput(attrs={'class': 'generate-input', 'placeholder': 'Partner name'})
     )
-    relationship_start_date = forms.DateField(
+    relationship_start_date = forms.IntegerField(
         required=True,
-        widget=forms.DateInput(attrs={'class': 'generate-input', 'placeholder': 'Combo Box',
-                                      'onfocus': '(this.type="date")', 'onblur': '(this.type="date")',
-                                      'style': 'width: 100%;'})
+        widget=forms.NumberInput(attrs={"min": "1920"})
     )
     occasion = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={'class': 'select_input-hidden', 'placeholder': 'Occasion'})
     )
-    poem_style = forms.CharField(
+    style = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={'class': 'select_input-hidden', 'placeholder': 'Poem style'})
-    )
-    letter_style = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'select_input-hidden', 'placeholder': 'Letter Style'})
+        widget=forms.TextInput(attrs={'class': 'select_input-hidden', 'placeholder': 'Style'})
     )
     tone = forms.CharField(
         required=False,
@@ -98,17 +93,13 @@ class AccountForm(forms.Form):
         required=True,
         widget=forms.EmailInput(attrs={'class': 'generate-input', 'placeholder': 'Email Address'})
     )
-    phone_number = PhoneNumberField(
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'generate-input', 'placeholder': 'Phone number'})
-    )
 
     #partner
     partner_email = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={'class': 'generate-input', 'placeholder': 'Partner email'})
+        widget=forms.EmailInput(attrs={'class': 'generate-input', 'placeholder': 'Partner email'})
     )
-    partner_phone = PhoneNumberField(
+    partner_name = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={'class': 'generate-input', 'placeholder': 'Partner phone'})
     )

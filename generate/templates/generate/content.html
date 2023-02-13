@@ -57,7 +57,7 @@
                     </div>
                     <a href="{% url 'generate' %}">
                         <button class="purple-btn">
-                            Edit Subject
+                            Edit
                         </button>
                     </a>
                 </div>
@@ -129,11 +129,14 @@
                         Send Love Letter To My Email
                     </button>
                 </a>
-                <a href="{% url 'send_to_my_phone' content.id %}">
-                    <button class="send-btn pr-color">
-                        Send Love Letter To My Mobile
-                    </button>
-                </a>
+                {% if ADD_FLOWER_LINK %}
+                    <a href="{{ ADD_FLOWER_LINK }}" target="_blank">
+                        <button class="send-btn pr-color">
+                            Add flowers to the poem
+                        </button>
+                    </a>
+                {% endif %}
+
                 <a href="{% url 'send_to_partner_email' content.id %}">
                     <button class="send-btn bl-color">
                         Send Love Letter Your Behalf
@@ -290,6 +293,6 @@
 <script src="{% static 'generate/js/fontAwesome.js' %}"></script>
 <script src="{% static 'generate/js/share.js' %}"></script>
 <script src="{% static 'generate/js/select.js' %}"></script>
-
+<script src="{% static 'generate/js/generatingText.js' %}"></script>
 <script src="{% static 'generate/js/ajaxGenerate.js' %}"></script>
 {% endblock %}

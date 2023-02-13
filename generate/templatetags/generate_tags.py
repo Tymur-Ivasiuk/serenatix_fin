@@ -12,5 +12,10 @@ def get_item(dictionary, value):
 
 
 @register.filter
+def get_item(dictionary, value):
+    return dictionary.get(value)
+
+
+@register.filter
 def get_text_without_n(string):
     return string.replace('\n', '   ')

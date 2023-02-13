@@ -19,17 +19,6 @@ class QuestionsAdmin(SortableAdminBase, admin.ModelAdmin):
     ]
 
 
-@admin.register(PoemStyles)
-class PoemStylesAdmin(admin.ModelAdmin):
-    fields = ['title']
-    list_display = ['title']
-
-
-@admin.register(LetterStyles)
-class LetterStylesAdmin(admin.ModelAdmin):
-    fields = ['title']
-    list_display = ['title']
-
 
 @admin.register(Length)
 class LengthAdmin(admin.ModelAdmin):
@@ -57,10 +46,24 @@ class RelationshipTypesAdmin(admin.ModelAdmin):
 class ContentAdmin(ExportActionMixin, admin.ModelAdmin):
     actions = ["export_as_csv"]
 
+
+
+
+class StylesInlines(SortableTabularInline, admin.TabularInline):
+    model = ContentStyles
+    extra = 0
+
+class ContentTypesAdmin(SortableAdminBase, admin.ModelAdmin):
+    inlines = [
+        StylesInlines,
+    ]
+
+admin.site.register(User)
 admin.site.register(Profile)
 admin.site.register(Content, ContentAdmin)
 admin.site.register(Questions, QuestionsAdmin)
-admin.site.register(CreditsPrice)
+admin.site.register(ContentTypes, ContentTypesAdmin)
 admin.site.register(RelationshipTypes, RelationshipTypesAdmin)
 admin.site.register(CreditsBuyPriceAndCount)
 admin.site.register(Transactions)
+admin.site.register(ScriptsHead)

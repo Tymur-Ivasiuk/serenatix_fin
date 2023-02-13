@@ -26,7 +26,7 @@ body {
 }
 
 .main {
-    padding-bottom: 50px;
+    padding-bottom: 20px;
 }
 
 .header {
@@ -379,6 +379,10 @@ body {
 
 .archive table tbody td {
     color: rgba(255, 255, 255, 0.5);
+}
+
+.archive table tbody td:first-of-type {
+    text-decoration: underline;
 }
 
 

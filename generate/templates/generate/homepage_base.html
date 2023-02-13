@@ -15,6 +15,10 @@
     {% block css_styles %}
     {% endblock %}
 
+    <script>
+        {{SCRIPT}}
+    </script>
+
     <title>{{ title }}</title>
 </head>
 <body>
@@ -40,4 +44,7 @@
     </main>
 </body>
 <script src="{% static 'generate/js/fontAwesome.js' %}"></script>
+{% block js_scripts %}
+
+{% endblock %}
 </html>

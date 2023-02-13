@@ -8,7 +8,7 @@
             <p class="block-title">
                 Create a love letter or poem
             </p>
-            <a href="{% url 'login' %}" class="login-btn">
+            <a href="{% url 'register' %}" class="login-btn">
                 <button class="block-btn red_btn">
                     Start
                 </button>
@@ -20,10 +20,14 @@
             <p class="block-title">
                 Refer friends, earn credits
             </p>
-            <button class="block-btn blue_btn copy-non-active">
+            <button class="block-btn blue_btn" id="referral" value="{{ url_copy }}">
                 Copy referral link
             </button>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block js_scripts %}
+<script src="{% static 'generate/js/copied.js' %}"></script>
 {% endblock %}
