@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'serenatix.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'serenatix',
+        'NAME': 'serenatix4',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',
@@ -108,7 +108,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = ['generate.backends.EmailBackend']
+AUTH_USER_MODEL = 'generate.User'
+# AUTHENTICATION_BACKENDS = ['generate.backends.EmailBackend']
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
