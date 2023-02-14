@@ -70,7 +70,7 @@
             <form class="rewrite-option" method="post">
                 {% csrf_token %}
 
-                <input type="hidden" name="content_type" value="{{ content.content_type }}">
+                <input type="hidden" name="content_type" value="{{ content.content_type.id }}">
 
                 <p class="rewrite-text">
                     Rewrite with diferent number of words

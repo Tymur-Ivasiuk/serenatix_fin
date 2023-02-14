@@ -8,6 +8,8 @@ from datetime import datetime
 from django.core.mail import mail_admins, EmailMessage
 
 from dotenv import load_dotenv
+from ratelimiter import RateLimiter
+from retrying import retry
 
 from .models import *
 
@@ -47,7 +49,10 @@ def create_prompt(info, answers, first_name):
     return final_prompt
 
 
+@retry(stop_max_attempt_number=10)
+@RateLimiter(max_calls=20, period=60)
 def get_ai_response(prompt):
+    print('ATTEMPT')
     response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=2048, temperature=0)
     return response["choices"][0]["text"]
 

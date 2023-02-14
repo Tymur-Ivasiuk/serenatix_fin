@@ -101,7 +101,7 @@ class AccountForm(forms.Form):
     )
     partner_name = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={'class': 'generate-input', 'placeholder': 'Partner phone'})
+        widget=forms.TextInput(attrs={'class': 'generate-input', 'placeholder': 'Partner name'})
     )
 
 

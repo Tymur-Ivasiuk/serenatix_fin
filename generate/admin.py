@@ -13,7 +13,7 @@ class AnswersInlines(SortableTabularInline, admin.TabularInline):
 class QuestionsAdmin(SortableAdminMixin, SortableAdminBase, admin.ModelAdmin):
     search_fields = ['question']
 
-    list_display = ['question', 'my_order']
+    list_display = ['question', 'content_type', 'is_publish', 'my_order']
     ordering = ['my_order']
 
     inlines = [
@@ -47,8 +47,8 @@ class RelationshipTypesAdmin(SortableAdminMixin, admin.ModelAdmin):
 
 class ContentAdmin(ExportActionMixin, admin.ModelAdmin):
     actions = ["export_as_csv"]
-
-
+    list_display = ['title', 'content_type', 'user']
+    list_filter = ['content_type']
 
 
 class StylesInlines(SortableTabularInline, admin.TabularInline):
@@ -56,6 +56,8 @@ class StylesInlines(SortableTabularInline, admin.TabularInline):
     extra = 0
 
 class ContentTypesAdmin(SortableAdminBase, admin.ModelAdmin):
+    list_display = ['title', 'credits']
+
     inlines = [
         StylesInlines,
     ]

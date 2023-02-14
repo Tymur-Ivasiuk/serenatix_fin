@@ -121,7 +121,7 @@ def send_email_verify(email, token):
 
     message = 'Hi! Paste the link to verify your account <br><br>'
     if os.environ.get("WEBSITE_HOSTNAME"):
-        message += f'https://{os.environ.get("WEBSITE_HOSTNAME")}/verify/{token}'
+        message += f'https://{os.environ.get("CUSTOM_HOSTNAME", os.environ.get("WEBSITE_HOSTNAME"))}/verify/{token}'
     else:
         message += f'http://127.0.0.1:8000/verify/{token}'
 
@@ -239,7 +239,7 @@ class QuestionsView(TemplateView):
         print(self.request.session['generate_info'])
 
         context['questions'] = Questions.objects.filter(is_publish=True,
-                                                        content_type=self.request.session['generate_info'].get('content_type')).prefetch_related('answers_set')
+                                                         content_type=self.request.session['generate_info'].get('content_type')).prefetch_related('answers_set')
         context['saved_answers'] = self.request.user.profile.save_answers.get('answers', [])
         return context
 
@@ -289,7 +289,7 @@ class ContentView(DetailView):
         context['styles'] = ContentStyles.objects.filter(content_type=kwargs['object'].content_type)
 
         context['answers_count'] = len(context['content'].answers.keys())
-        context['questions_count'] = Questions.objects.all().count()
+        context['questions_count'] = Questions.objects.filter(content_type=context['content'].content_type).count()
 
         return context
 
@@ -297,26 +297,22 @@ class ContentView(DetailView):
         print(request.POST)
         if request.POST.get('length') or request.POST.get('style') or request.POST.get('tone'):
             if self.request.user.profile.credits_count < ContentTypes.objects.filter(
-                    title=request.POST.get('content_type')).first().credits:
+                    id=request.POST.get('content_type')).first().credits:
                 messages.error(request, "Sorry, you don't have enough credits")
                 return redirect('generate')
 
             content = Content.objects.get(id=self.kwargs.get('content_id'))
             dict_info_content = content.content_info
-            dict_info_content['content_type'] = content.id
+            dict_info_content['content_type'] = content.content_type.id
             dict_info_content['length'] = request.POST.get('length')
             dict_info_content['tones'] = request.POST.get('tones')
-            if dict_info_content.get('type') == 'Poem':
-                dict_info_content['poem_style'] = request.POST.get('style')
-            else:
-                dict_info_content['letter_style'] = request.POST.get('style')
+            dict_info_content['style'] = request.POST.get('style')
 
             ss = send_ai_request(dict_info_content,
                                  Content.objects.get(id=kwargs['content_id']).answers,
                                  request.user)
             return redirect(ss)
 
-        print("VPVV")
         return redirect(request.path)
 
 
