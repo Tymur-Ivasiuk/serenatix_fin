@@ -51,15 +51,14 @@ class LoginUser(LoginView):
         return context
 
     def form_valid(self, form):
-        user = form.get_user()
+        # user = form.get_user()
         if not self.request.POST.get('remember', None):
             self.request.session.set_expiry(0)
-        if not user.profile.email_verify:
-            messages.error(self.request, 'Please verify your email')
-            return redirect('login')
-        else:
-            return super().form_valid(form)
-
+        # if not user.profile.email_verify:
+        #     messages.error(self.request, 'Please verify your email')
+        #     return redirect('login')
+        # else:
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('generate')
@@ -109,8 +108,8 @@ class RegisterUser(CreateView):
 
             profile[0].save()
 
-            send_email_verify(user.email, auth_token)
-            messages.success(request, 'An email has been sent to your email. Please verify your email address')
+            # send_email_verify(user.email, auth_token)
+            # messages.success(request, 'An email has been sent to your email. Please verify your email address')
             return redirect('login')
         else:
             return render(request, self.template_name, {'form': form})
