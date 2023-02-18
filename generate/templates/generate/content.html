@@ -9,9 +9,9 @@
 
 {% block main %}
 <main class="main">
-<!--    <div class="ads-banner-big">-->
-
-<!--    </div>-->
+    {% if horizontal_image %}
+        <img src="{{ horizontal_image.0.image.url }}" class="ads-banner-big">
+    {% endif %}
     <div class="content-wrap">
         <div class="content">
             <div class="answered-questions">
@@ -45,27 +45,28 @@
                 {% endfor %}
             {% endif %}
 
-            <div class="letter">
+            <form class="letter" method="post">
+                {% csrf_token %}
+
+                <input type="hidden" name="content_id" value="{{content.id}}">
+
                 <div class="letter-heare-info">
                     <div>
                         <p class="subject">
                             Subject
                         </p>
-                        <h2 class="letter-title">
-                            {{ content.title }}
-                        </h2>
+                        <input required="true" type="text" name="contentTitle" id="contentTitle" class="letter-title" disabled="true" placeholder="Title" value="{{content.title}}">
                     </div>
-                    <a href="{% url 'generate' %}">
-                        <button class="purple-btn">
-                            Edit
-                        </button>
-                    </a>
+                    <button type="button" id="editBtn" class="purple-btn">
+                        Edit
+                    </button>
+                    <button id="saveBtn" name="edit" value="on" style="display: none;" class="magenta-btn">
+                        Save
+                    </button>
                 </div>
 
-                <div class="letter-text">
-                    {{ content.text|linebreaksbr }}
-                </div>
-            </div>
+                <textarea required="true" class="letter-text" name="contentText" id="contentText" disabled="true" placeholder="Your generate text...">{{content.text}}</textarea>
+            </form>
 
             <form class="rewrite-option" method="post">
                 {% csrf_token %}
@@ -276,10 +277,9 @@
 <!--        <div class="ads-banner-side">-->
 <!--        </div>-->
     </div>
-
-<!--    <div class="ads-banner-big">-->
-
-<!--    </div>-->
+    {% if horizontal_image.1 %}
+        <img src="{{ horizontal_image.1.image.url }}" class="ads-banner-big">
+    {% endif %}
 </main>
 
 <div id="preloader" class="disable-load">
@@ -295,4 +295,5 @@
 <script src="{% static 'generate/js/select.js' %}"></script>
 <script src="{% static 'generate/js/generatingText.js' %}"></script>
 <script src="{% static 'generate/js/ajaxGenerate.js' %}"></script>
+<script src="{% static 'generate/js/editContent.js' %}"></script>
 {% endblock %}

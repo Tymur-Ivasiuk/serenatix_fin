@@ -12,7 +12,7 @@
         <div class="quastion-heart">
             <img src="{% static 'generate/img/heart.svg' %}">
             <p class="quastion-count">
-                0/0
+                {{start_slide}}/{{ questions|length }}
             </p>
             <p class="quastion-count_desc">
                 QUESTION
@@ -104,7 +104,29 @@
 <script src="{% static 'generate/js/fontAwesome.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 <script src="{% static 'generate/js/slick.min.js' %}"></script>
-<script src="{% static 'generate/js/slider.js' %}"></script>
+<!--<script src="{% static 'generate/js/slider.js' %}"></script>-->
 <script src="{% static 'generate/js/generatingText.js' %}"></script>
 <script src="{% static 'generate/js/ajaxGenerate.js' %}"></script>
+<script>
+    var $status = $('.quastion-count');
+    var $slickElement = $('.answers-tables');
+
+    $slickElement.slick({
+        arrows: true,
+        speed: 500,
+        // fade: true,
+        infinite: false,
+        cssEase: 'linear',
+        nextArrow: '.next-question',
+        prevArrow: '.previous-question',
+        draggable: false,
+        adaptiveHeight: true,
+        initialSlide: {{start_slide|add:"-1"}},
+    });
+
+    $slickElement.on('init reInit afterChange', function (event, slick, currentSlide, nextSlide) {
+        var i = (currentSlide ? currentSlide : 0) + 1;
+        $status.text(i + '/' + slick.slideCount);
+    });
+</script>
 {% endblock %}

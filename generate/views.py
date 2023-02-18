@@ -28,7 +28,8 @@ class WelcomeView(TemplateView):
         context['SCRIPT'] = ScriptsHead.objects.first()
 
         if self.request.user.is_authenticated:
-            context['url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
+            context[
+                'url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
         else:
             context['url_copy'] = self.request.build_absolute_uri(reverse("welcome"))
 
@@ -86,7 +87,6 @@ class RegisterUser(CreateView):
 
         return context
 
-
     def post(self, request, *args, **kwargs):
         form = RegisterUserForm(self.request.POST)
         print(request.GET)
@@ -97,7 +97,6 @@ class RegisterUser(CreateView):
 
             profile = Profile.objects.get_or_create(user=user)
             profile[0].email_code = auth_token
-
 
             if request.GET.get('referral'):
                 k = Profile.objects.get(referral_code=request.GET.get('referral'))
@@ -127,6 +126,7 @@ def send_email_verify(email, token):
     recipient_list = [email]
     SendMyEmails(subject, message, recipient_list).start()
 
+
 def verify(request, email_code):
     try:
         profile = Profile.objects.filter(email_code=email_code).first()
@@ -152,8 +152,17 @@ class GenerateView(FormView):
     form_class = GenerateForm
 
     def dispatch(self, request, *args, **kwargs):
-        if not self.request.user.is_authenticated:
-            return redirect('login')
+        if self.request.session.get('unlogined') and self.request.user.is_authenticated:
+            if self.request.session.get('unlogined').get('save_answers'):
+                self.request.user.profile.save_answers = self.request.session.get('unlogined').get('save_answers')
+                self.request.user.profile.save()
+            elif self.request.session['unlogined'].get('finished_generate'):
+                self.request.session['generate_info'] = self.request.session.get('unlogined').get('finished_generate').get('info')
+                self.request.session['form_answers'] = self.request.session.get('unlogined').get('finished_generate').get('form_answers')
+
+            del self.request.session['unlogined']
+            self.request.session.modified = True
+        print(self.request.session.get('generate_info'))
         return super(GenerateView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -161,32 +170,39 @@ class GenerateView(FormView):
         context['title'] = 'Generate'
 
         context['SCRIPT'] = ScriptsHead.objects.first()
-
-        context['get_items'] = self.request.session.get('generate_info', {})
-        if not context['get_items']:
-            context['get_items'] = self.request.user.profile.save_answers.get('form_answers', {})
-
-        if not context['get_items'].get('partner_name'):
-            context['get_items']['partner_name'] = self.request.user.profile.partner_name
-
         context['content_types'] = ContentTypes.objects.all()
-        if context['get_items'].get('content_type'):
-            context['current_content_type'] = context['content_types'].get(id=context['get_items'].get('content_type')).title
 
+        if self.request.user.is_authenticated:
+            context['get_items'] = self.request.session.get('generate_info', {})
+            if not context['get_items']:
+                context['get_items'] = self.request.user.profile.save_answers.get('form_answers', {})
+
+            if not context['get_items'].get('partner_name'):
+                context['get_items']['partner_name'] = self.request.user.profile.partner_name
+
+            if context['get_items'].get('content_type'):
+                context['current_content_type'] = context['content_types'].get(
+                    id=context['get_items'].get('content_type')).title
+        else:
+            context['get_items'] = {}
+
+        print(context['get_items'])
         context['styles'] = ContentStyles.objects.all()
         context['tone'] = Tone.objects.all()
         context['occasion'] = Occasion.objects.all()
         context['relationship_types'] = RelationshipTypes.objects.all()
         context['relationship_date'] = [datetime.today().year - i for i in range(80)]
 
-        context['url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
+        if self.request.user.is_authenticated:
+            context[
+                'url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
 
-        context['paypal'] = os.getenv('PAYPAL_KEY')
+            context['paypal'] = os.getenv('PAYPAL_KEY')
 
-        d = CreditsBuyPriceAndCount.objects.last()
-        context['credits_buy'] = d if d else {'credits_count': 50, 'price': 2.00}
+            d = CreditsBuyPriceAndCount.objects.last()
+            context['credits_buy'] = d if d else {'credits_count': 50, 'price': 2.00}
 
-        context['archive'] = Content.objects.filter(user=self.request.user).order_by('-time_create')[:5]
+            context['archive'] = Content.objects.filter(user=self.request.user).order_by('-time_create')[:5]
 
         return context
 
@@ -202,12 +218,13 @@ class GenerateView(FormView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        if self.request.user.profile.credits_count < ContentTypes.objects.filter(
-                id=self.request.POST.get('content_type')).first().credits:
-            messages.error(self.request, "Sorry, you don't have enough credits")
-            return redirect('generate')
-        else:
-            self.request.session['generate_info'] = {k: v for k, v in self.request.POST.items() if
+        if self.request.user.is_authenticated:
+            if self.request.user.profile.credits_count < ContentTypes.objects.filter(
+                    id=self.request.POST.get('content_type')).first().credits:
+                messages.error(self.request, "Sorry, you don't have enough credits")
+                return redirect('generate')
+
+        self.request.session['generate_info'] = {k: v for k, v in self.request.POST.items() if
                                                      k not in {'csrfmiddlewaretoken'}}
         return super().form_valid(form)
 
@@ -222,12 +239,10 @@ class GenerateView(FormView):
 class QuestionsView(TemplateView):
     template_name = 'generate/questions.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        if not self.request.user.is_authenticated:
-            return redirect('login')
-        if not request.session.get('generate_info'):
-            return redirect('generate')
-        return super(QuestionsView, self).dispatch(request, *args, **kwargs)
+    # def dispatch(self, request, *args, **kwargs):
+    #     if not request.session.get('generate_info'):
+    #         return redirect('generate')
+    #     return super(QuestionsView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -235,14 +250,27 @@ class QuestionsView(TemplateView):
 
         context['SCRIPT'] = ScriptsHead.objects.first()
 
-        print(self.request.session['generate_info'])
-
         context['questions'] = Questions.objects.filter(is_publish=True,
-                                                         content_type=self.request.session['generate_info'].get('content_type')).prefetch_related('answers_set')
-        context['saved_answers'] = self.request.user.profile.save_answers.get('answers', [])
+                                                        content_type=self.request.session['generate_info'].get(
+                                                            'content_type')).prefetch_related('answers_set')
+        if self.request.user.is_authenticated:
+            context['saved_answers'] = self.request.session.get('form_answers', [])
+            if not context['saved_answers']:
+                context['saved_answers'] = self.request.user.profile.save_answers.get('answers', [])
+
+        if self.request.session.get('content_answers'):
+            answers_list_number = [int(x) for x in self.request.session.get('content_answers').keys()]
+            context['start_slide'] = find_missing(answers_list_number)
+        else:
+            context['start_slide'] = 1
+
         return context
 
     def post(self, request, *args, **kwargs):
+        if request.session.get('content_answers'):
+            del request.session['content_answers']
+            request.session.modified = True
+
         if request.POST.get('save'):
             answers = []
             form_answers = request.session.get('generate_info')
@@ -252,17 +280,32 @@ class QuestionsView(TemplateView):
                     answers += i[1]
                 except:
                     pass
-            request.user.profile.save_answers = {'answers': answers, 'form_answers': form_answers}
-            request.user.profile.save()
-            messages.success(request, 'All answers are saved')
-            return redirect('generate')
+            if request.user.is_authenticated:
+                request.user.profile.save_answers = {'answers': answers, 'form_answers': form_answers}
+                request.user.profile.save()
+                messages.success(request, 'All answers are saved')
+                return redirect('generate')
+            else:
+                request.session['unlogined'] = {}
+                request.session['unlogined']['save_answers'] = {'answers': answers, 'form_answers': form_answers}
+                request.session.modified = True
+                messages.info(request, 'You need to login to your account')
+                return redirect('login')
         else:
             dict_answers = {k: v for k, v in dict(self.request.POST).items() if k not in {'csrfmiddlewaretoken',
                                                                                           'finish', 'save'}}
-            ss = send_ai_request(request.session.get('generate_info'),
-                                 dict_answers,
-                                 request.user)
-            return redirect(ss)
+            if request.user.is_authenticated:
+                ss = send_ai_request(request.session.get('generate_info'),
+                                     dict_answers,
+                                     request.user)
+                return redirect(ss)
+            else:
+                request.session['unlogined'] = {}
+                request.session['unlogined']['finished_generate'] = {'info': request.session.get('generate_info'),
+                                                                     'form_answers': dict_answers}
+                request.session.modified = True
+                messages.info(request, 'You need to login to your account')
+                return redirect('login')
 
 
 class ContentView(DetailView):
@@ -283,6 +326,8 @@ class ContentView(DetailView):
 
         context['SCRIPT'] = ScriptsHead.objects.first()
 
+        context['horizontal_image'] = Banners.objects.filter(orientation="Horizontal")
+
         context['length'] = Length.objects.all()
         context['tones'] = Tone.objects.all()
         context['styles'] = ContentStyles.objects.filter(content_type=kwargs['object'].content_type)
@@ -293,7 +338,6 @@ class ContentView(DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         if request.POST.get('length') or request.POST.get('style') or request.POST.get('tone'):
             if self.request.user.profile.credits_count < ContentTypes.objects.filter(
                     id=request.POST.get('content_type')).first().credits:
@@ -312,6 +356,11 @@ class ContentView(DetailView):
                                  request.user)
             return redirect(ss)
 
+        if request.POST.get('edit'):
+            content = Content.objects.get(id=int(request.POST.get('content_id')))
+            content.title = request.POST.get('contentTitle')
+            content.text = request.POST.get('contentText')
+            content.save()
         return redirect(request.path)
 
 
@@ -350,6 +399,7 @@ def change_questions(request, content_id):
         return redirect('generate')
     else:
         request.session['generate_info'] = content.content_info
+        request.session['content_answers'] = content.answers
 
     return redirect('questions')
 
@@ -399,7 +449,8 @@ class AccountView(FormView):
         context['paypal'] = os.getenv('PAYPAL_KEY')
         context['SCRIPT'] = ScriptsHead.objects.first()
 
-        context['url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
+        context[
+            'url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
 
         d = CreditsBuyPriceAndCount.objects.last()
         context['credits_buy'] = d if d else {'credits_count': 50, 'price': 2.00}

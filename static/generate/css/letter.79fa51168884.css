@@ -9,8 +9,6 @@
     object-fit: cover;
     overflow: hidden;
     min-height: 100px;
-    margin-bottom: 10px;
-    border-radius: 10px;
 }
 .ads-banner-side {
     display: flex;
@@ -294,7 +292,7 @@ main > div {
 
     width: 23px;
     height: 23px;
-    background: url(../img/icon/clock.svg) no-repeat;
+    background: url("../img/icon/clock.fa94e0bec8de.svg") no-repeat;
 }
 
 .rewrite-selects {

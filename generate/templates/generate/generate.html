@@ -26,7 +26,11 @@
         {% endfor %}
     {% endif %}
 
-    <div class="generate-tabs">
+    {% if request.user.is_authenticated %}
+        <div class="generate-tabs">
+    {% else %}
+        <div class="generate-tabs" style="justify-content: center;">
+    {% endif %}
         <form class="generate-form" method="post">
             {% csrf_token %}
             <table>
@@ -206,119 +210,122 @@
             </div>
         </form>
 
-        <div class="generate-tab">
-            <div class="credits-info">
-                <div class="heart heart-adaptive">
-                    <img src="{% static 'generate/img/heart.svg' %}">
-                    <p class="count-credits">
-                        {{ request.user.profile.credits_count }}
-                    </p>
-                    <p class="count-credits_desc">
-                        total Credits
-                    </p>
+        {% if request.user.is_authenticated %}
+            <div class="generate-tab">
+                <div class="credits-info">
+                    <div class="heart heart-adaptive">
+                        <img src="{% static 'generate/img/heart.svg' %}">
+                        <p class="count-credits">
+                            {{ request.user.profile.credits_count }}
+                        </p>
+                        <p class="count-credits_desc">
+                            total Credits
+                        </p>
+                    </div>
+                    <div class="referal">
+                        <p class="credits-info_title">
+                            Refer friends, earn credits
+                        </p>
+                        <p class="referal-desc">
+                            Send credits to friends and create magical love content for each friend who joins
+                        </p>
+                        <button class="referal-copy blue-btn" id="referral" value="{{ url_copy }}">
+                            Copy referral link
+                        </button>
+                    </div>
+                    <div class="heart big-heart">
+                        <img src="{% static 'generate/img/heart.svg' %}">
+                        <p class="count-credits">
+                            {{ request.user.profile.credits_count }}
+                        </p>
+                        <p class="count-credits_desc">
+                            total Credits
+                        </p>
+                    </div>
+                    <div class="credits-buy">
+                        <p class="credits-info_title">
+                            Donate to Serenatix
+                        </p>
+                        <p class="referal-desc">
+                            Support our efforts to bring you personalized love letters and poems. Every contribution helps us improve and maintain the service for you
+                        </p>
+                        <div id="paypal-button-container"></div>
+                    </div>
                 </div>
-                <div class="referal">
-                    <p class="credits-info_title">
-                        Refer friends, earn credits
-                    </p>
-                    <p class="referal-desc">
-                        Send credits to friends and create magical love content for each friend who joins
-                    </p>
-                    <button class="referal-copy blue-btn" id="referral" value="{{ url_copy }}">
-                        Copy referral link
-                    </button>
-                </div>
-                <div class="heart big-heart">
-                    <img src="{% static 'generate/img/heart.svg' %}">
-                    <p class="count-credits">
-                        {{ request.user.profile.credits_count }}
-                    </p>
-                    <p class="count-credits_desc">
-                        total Credits
-                    </p>
-                </div>
-                <div class="credits-buy">
-                    <p class="credits-info_title">
-                        Donate to Serenatix
-                    </p>
-                    <p class="referal-desc">
-                        Support our efforts to bring you personalized love letters and poems. Every contribution helps us improve and maintain the service for you
-                    </p>
-                    <div id="paypal-button-container"></div>
-                </div>
-            </div>
 
-            {% if archive %}
-                <div class="archive">
-                    <div class="archive-title">
-                            <p>Archive</p>
-                            <a href="{% url 'archive' %}">
-                                <button class="magenta-btn">
-                                    View all
-                                </button>
-                            </a>
-                        </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <td>
-                                    <div>
-                                        Name
-<!--                                        <div class="table-sorting">-->
-<!--                                            <a href="#!">-->
-<!--                                                <img src="./img/icon/stroke-small.svg">-->
-<!--                                            </a>-->
-<!--                                            <a href="#!">-->
-<!--                                                <img src="./img/icon/stroke-small.svg">-->
-<!--                                            </a>-->
-<!--                                        </div>-->
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        Type
-<!--                                        <div class="table-sorting">-->
-<!--                                            <a href="#!">-->
-<!--                                                <img src="./img/icon/stroke-small.svg">-->
-<!--                                            </a>-->
-<!--                                            <a href="#!">-->
-<!--                                                <img src="./img/icon/stroke-small.svg">-->
-<!--                                            </a>-->
-<!--                                        </div>-->
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        Date
-<!--                                        <div class="table-sorting">-->
-<!--                                            <a href="#!">-->
-<!--                                                <img src="./img/icon/stroke-small.svg">-->
-<!--                                            </a>-->
-<!--                                            <a href="#!">-->
-<!--                                                <img src="./img/icon/stroke-small.svg">-->
-<!--                                            </a>-->
-<!--                                        </div>-->
-                                    </div>
-                                </td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in archive %}
+                {% if archive %}
+                    <div class="archive">
+                        <div class="archive-title">
+                                <p>Archive</p>
+                                <a href="{% url 'archive' %}">
+                                    <button class="magenta-btn">
+                                        View all
+                                    </button>
+                                </a>
+                            </div>
+                        <table>
+                            <thead>
                                 <tr>
                                     <td>
-                                        <a href="{{ i.get_absolute_url }}">
-                                            {{ i.title }}
-                                        </a>
+                                        <div>
+                                            Name
+    <!--                                        <div class="table-sorting">-->
+    <!--                                            <a href="#!">-->
+    <!--                                                <img src="./img/icon/stroke-small.svg">-->
+    <!--                                            </a>-->
+    <!--                                            <a href="#!">-->
+    <!--                                                <img src="./img/icon/stroke-small.svg">-->
+    <!--                                            </a>-->
+    <!--                                        </div>-->
+                                        </div>
                                     </td>
-                                    <td>{{ i.content_type }}</td>
-                                    <td>{{ i.time_create|date:"j F, Y" }}</td>
+                                    <td>
+                                        <div>
+                                            Type
+    <!--                                        <div class="table-sorting">-->
+    <!--                                            <a href="#!">-->
+    <!--                                                <img src="./img/icon/stroke-small.svg">-->
+    <!--                                            </a>-->
+    <!--                                            <a href="#!">-->
+    <!--                                                <img src="./img/icon/stroke-small.svg">-->
+    <!--                                            </a>-->
+    <!--                                        </div>-->
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            Date
+    <!--                                        <div class="table-sorting">-->
+    <!--                                            <a href="#!">-->
+    <!--                                                <img src="./img/icon/stroke-small.svg">-->
+    <!--                                            </a>-->
+    <!--                                            <a href="#!">-->
+    <!--                                                <img src="./img/icon/stroke-small.svg">-->
+    <!--                                            </a>-->
+    <!--                                        </div>-->
+                                        </div>
+                                    </td>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-        </div>
+                            </thead>
+                            <tbody>
+                                {% for i in archive %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ i.get_absolute_url }}">
+                                                {{ i.title }}
+                                            </a>
+                                        </td>
+                                        <td>{{ i.content_type }}</td>
+                                        <td>{{ i.time_create|date:"j F, Y" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
     </div>
 </main>
 {% endblock %}

@@ -287,3 +287,18 @@ class ScriptsHead(models.Model):
     def __str__(self):
         return self.script
 
+class PromptText(models.Model):
+    text = models.TextField()
+
+    def __str__(self):
+        return self.text
+
+
+class Banners(models.Model):
+    image = models.ImageField(upload_to="img/%Y/%m/%d")
+
+    orientation_choice = [
+        ('Horizontal', 'Horizontal'),
+        ('Vertical', 'Vertical'),
+    ]
+    orientation = models.CharField(max_length=50, choices=orientation_choice)

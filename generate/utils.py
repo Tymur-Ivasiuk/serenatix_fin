@@ -24,17 +24,47 @@ def calculate_years(start_date):
     return difference
 
 
+def find_missing(lst):
+    for i in range(len(lst)):
+        if lst[i] != i+1:
+            return i+1
+
+def replace_all(text, dic):
+    for i, j in dic.items():
+        text = text.replace(str(i), str(j))
+    return text
+
 def create_prompt(info, answers, first_name):
-    prompt = (f'Write a love {info.get("content_type")} '
-              f'in a {info.get("style")} '
-              f'style and {info.get("tone", "romantic")} tone of voice '
-              f'using {info.get("length", "500")} words for '
-              f'this occasion: {info.get("occasion")}. '
-              f'I am a {info.get("genders")} '
-              f'named {info.get("partner_name")} '
-              f'who is my {info.get("relationship_type")} '
-              f'for the last {calculate_years(info.get("relationship_start_date"))} years. '
-              f'Sign the {info.get("content_type")} with my name: {first_name}. ')
+    prompt_model = PromptText.objects.first()
+    if prompt_model:
+        replace_dict = {
+            "CONTENT_TYPE": info.get("content_type"),
+            "STYLE_TYPE": info.get("style"),
+            "TONE_TYPE": info.get("tone", "romantic"),
+            "LENGTH_TYPE": info.get("length", "500"),
+            "OCCASION_TYPE": info.get("occasion"),
+            "GENDERS_TYPE": info.get("genders"),
+            "RELATIONSHIP_TYPE": info.get("relationship_type"),
+            "PARTNER_NAME": info.get("partner_name"),
+            "YEARS_TOGETHER": calculate_years(info.get("relationship_start_date")),
+            "USERNAME": first_name,
+        }
+        prompt = replace_all(prompt_model.text, replace_dict)
+        print("PROMPT MODEL", prompt)
+    else:
+        prompt = (f'Write a heartfelt love {info.get("content_type")} '
+                  f'to express my {info.get("style")} '
+                  f'for my {info.get("relationship_type")}, '
+                  f'{info.get("partner_name")}. '
+                  f'Convey the depth of your adoration and admiration, and bring to life the unique qualities and traits that I admire so much'
+                  f'The length should be up to {info.get("length", "500")} words for '
+                  f'this occasion: {info.get("occasion")}. '
+                  f'The {info.get("content_type")} should have a {info.get("tone", "romantic")} '
+                  f'emotional tone that suits my feelings towards my {info.get("relationship_type")}. '
+                  f'I am a {info.get("genders")} '
+                  f'on {info.get("occasion")}, '
+                  f'and we have been together for {calculate_years(info.get("relationship_start_date"))} of years. '
+                  f'Sign the {info.get("content_type")} with my name: {first_name}. ')
 
     addition = ''
     if answers:

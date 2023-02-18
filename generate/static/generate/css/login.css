@@ -144,6 +144,19 @@
 }
 
 
+.google-link {
+    width: 100%;
+}
+.google-link button {
+    width: 100%;
+    padding: 16px 20px;
+    background: #9E00FF;
+    box-shadow: 0px 30px 60px rgba(0, 108, 211, 0.15);
+    border-radius: 8px;
+
+    color: #FFF;
+}
+
 
 /* ADAPTIVE */
 
