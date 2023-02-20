@@ -140,9 +140,9 @@
                         <div class="select">
                             <button type="button" class="select_header" readonly="true">
                                 {% if get_items|get_item:"style" %}
-                                    <div class="select_current" style="opacity: 1;">{{ get_items|get_item:"style" }}</div>
+                                    <div class="select_current selectStyle" style="opacity: 1;">{{ get_items|get_item:"style" }}</div>
                                 {% else %}
-                                    <div class="select_current">Combo Box</div>
+                                    <div class="select_current selectStyle">Combo Box</div>
                                 {% endif %}
                                 <img src="{% static 'generate/img/icon/stroke.svg' %}" alt="pass-icon" class="input-icon">
                             </button>

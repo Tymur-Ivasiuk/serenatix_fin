@@ -114,13 +114,20 @@ def send_ai_request(info, answers, user):
 
 
 class SendAdminEmail(threading.Thread):
-    def __init__(self, subject, message):
+    def __init__(self, subject, message, email_user):
         self.subject = subject
         self.message = message
+        self.email_user = email_user
         threading.Thread.__init__(self)
 
     def run(self):
         mail_admins(subject=self.subject, message=self.message)
+
+        subject = "Serenatix feedback"
+        message = "We have received your letter. Wait for communication with the admin. Thank you for writing to us"
+        msg = EmailMessage(subject, message, bcc=[self.email_user])
+        msg.content_subtype = "html"
+        msg.send()
 
 
 class SendMyEmails(threading.Thread):

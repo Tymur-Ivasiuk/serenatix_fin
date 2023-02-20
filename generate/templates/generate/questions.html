@@ -63,7 +63,7 @@
                             <p class="checkbox-desc">Your answer</p>
                         </div>
                         <div class="input_wrap" style="margin-left: 0;">
-                            <input type="text" name="{{i.id}}" class="answer-input" style="width: 95%;" placeholder="Enter any other answer">
+                            <input type="text" name="{{i.id}}" data-value="input_save" class="answer-input" style="width: 95%;" placeholder="Enter any other answer">
                         </div>
                     {% endif %}
                 </div>
@@ -107,6 +107,7 @@
 <!--<script src="{% static 'generate/js/slider.js' %}"></script>-->
 <script src="{% static 'generate/js/generatingText.js' %}"></script>
 <script src="{% static 'generate/js/ajaxGenerate.js' %}"></script>
+<script src="{% static 'generate/js/questionsEnter.js' %}"></script>
 <script>
     var $status = $('.quastion-count');
     var $slickElement = $('.answers-tables');

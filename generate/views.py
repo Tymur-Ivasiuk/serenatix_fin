@@ -89,7 +89,6 @@ class RegisterUser(CreateView):
 
     def post(self, request, *args, **kwargs):
         form = RegisterUserForm(self.request.POST)
-        print(request.GET)
         if form.is_valid():
             user = form.save()
 
@@ -162,7 +161,6 @@ class GenerateView(FormView):
 
             del self.request.session['unlogined']
             self.request.session.modified = True
-        print(self.request.session.get('generate_info'))
         return super(GenerateView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -186,7 +184,6 @@ class GenerateView(FormView):
         else:
             context['get_items'] = {}
 
-        print(context['get_items'])
         context['styles'] = ContentStyles.objects.all()
         context['tone'] = Tone.objects.all()
         context['occasion'] = Occasion.objects.all()
@@ -272,6 +269,7 @@ class QuestionsView(TemplateView):
             request.session.modified = True
 
         if request.POST.get('save'):
+            print(request.POST)
             answers = []
             form_answers = request.session.get('generate_info')
             for i in dict(request.POST).items():
@@ -544,7 +542,7 @@ class ContactView(FormView):
             subject = form.cleaned_data['subject']
             message = f'{form.cleaned_data["message"]}\n\nUser: {form.cleaned_data["first_name"]} {form.cleaned_data["last_name"]} \n\nEMAIL from : {form.cleaned_data["email"]}'
 
-            SendAdminEmail(subject, message).start()
+            SendAdminEmail(subject, message, form.cleaned_data["email"]).start()
 
             messages.success(request, 'Your email has been sent to the site administrator. Thanks for the feedback')
 

@@ -150,6 +150,9 @@
                     <a onclick="Share.twitter('{{ request.build_absolute_uri }}','{{content.title}}', '{{content.text|get_text_without_n}}')">
                         <i class="fa-brands fa-twitter share-btn"></i>
                     </a>
+                    <a data-tooltip="Copy" class="copy-btn">
+                        <i class="fa-light fa-copy share-btn"></i>
+                    </a>
                 </div>
             </div>
 
@@ -296,4 +299,5 @@
 <script src="{% static 'generate/js/generatingText.js' %}"></script>
 <script src="{% static 'generate/js/ajaxGenerate.js' %}"></script>
 <script src="{% static 'generate/js/editContent.js' %}"></script>
+<script src="{% static 'generate/js/contentCopy.js' %}"></script>
 {% endblock %}

@@ -423,6 +423,10 @@ body {
     overflow-x: hidden;
 }
 
+body * {
+    box-sizing:border-box;
+}
+
 .homepage-wrapper { 
     display: flex;
     align-items: center;
