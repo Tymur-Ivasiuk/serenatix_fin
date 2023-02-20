@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'serenatix'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BC88D0F896044E75BCE845D72BA2B60F }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CA21D04D1527438687037FEC77CC470F }}
