@@ -160,7 +160,6 @@ class GenerateView(FormView):
                 self.request.session['form_answers'] = self.request.session.get('unlogined').get('finished_generate').get('form_answers')
                 del self.request.session['unlogined']
                 self.request.session.modified = True
-                return redirect('gerenating')
 
         return super(GenerateView, self).dispatch(request, *args, **kwargs)
 
