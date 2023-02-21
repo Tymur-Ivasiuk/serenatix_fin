@@ -158,9 +158,10 @@ class GenerateView(FormView):
             elif self.request.session['unlogined'].get('finished_generate'):
                 self.request.session['generate_info'] = self.request.session.get('unlogined').get('finished_generate').get('info')
                 self.request.session['form_answers'] = self.request.session.get('unlogined').get('finished_generate').get('form_answers')
+                del self.request.session['unlogined']
+                self.request.session.modified = True
+                return redirect('gerenating')
 
-            del self.request.session['unlogined']
-            self.request.session.modified = True
         return super(GenerateView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -191,8 +192,7 @@ class GenerateView(FormView):
         context['relationship_date'] = [datetime.today().year - i for i in range(80)]
 
         if self.request.user.is_authenticated:
-            context[
-                'url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
+            context['url_copy'] = f'{self.request.build_absolute_uri(reverse("register"))}?referral={self.request.user.profile.referral_code}'
 
             context['paypal'] = os.getenv('PAYPAL_KEY')
 
@@ -252,6 +252,7 @@ class QuestionsView(TemplateView):
                                                             'content_type')).prefetch_related('answers_set')
         if self.request.user.is_authenticated:
             context['saved_answers'] = self.request.session.get('form_answers', [])
+            context['inputs'] = self.request.user.profile.save_answers.get('inputs', {})
             if not context['saved_answers']:
                 context['saved_answers'] = self.request.user.profile.save_answers.get('answers', [])
 
@@ -269,29 +270,37 @@ class QuestionsView(TemplateView):
             request.session.modified = True
 
         if request.POST.get('save'):
-            print(request.POST)
             answers = []
+            inputs = {}
             form_answers = request.session.get('generate_info')
+
             for i in dict(request.POST).items():
                 try:
                     int(i[0])
                     answers += i[1]
                 except:
                     pass
+                if len(i[0].split(":")) == 2:
+                    inputs[i[0].split(":")[0]] = i[1][0]
+
             if request.user.is_authenticated:
-                request.user.profile.save_answers = {'answers': answers, 'form_answers': form_answers}
+                request.user.profile.save_answers = {'answers': answers, 'form_answers': form_answers, "inputs": inputs}
                 request.user.profile.save()
                 messages.success(request, 'All answers are saved')
+                print("SAVE QUEST")
                 return redirect('generate')
             else:
                 request.session['unlogined'] = {}
-                request.session['unlogined']['save_answers'] = {'answers': answers, 'form_answers': form_answers}
+                request.session['unlogined']['save_answers'] = {'answers': answers, 'form_answers': form_answers, "inputs": inputs}
                 request.session.modified = True
                 messages.info(request, 'You need to login to your account')
                 return redirect('login')
         else:
-            dict_answers = {k: v for k, v in dict(self.request.POST).items() if k not in {'csrfmiddlewaretoken',
-                                                                                          'finish', 'save'}}
+            dict_answers = {}
+            for k, v in dict(self.request.POST).items():
+                if k not in {'csrfmiddlewaretoken', 'finish', 'save'}:
+                    dict_answers[k.split(":")[0]] = v
+
             if request.user.is_authenticated:
                 ss = send_ai_request(request.session.get('generate_info'),
                                      dict_answers,
@@ -573,7 +582,7 @@ def send_to_partner_email(request, content_id):
             return redirect('generate')
 
         if not request.user.profile.partner_email:
-            messages.info(request, "Please enter your partner's email")
+            messages.error(request, "Please enter your partner's email")
             return redirect('account')
     else:
         return redirect('login')

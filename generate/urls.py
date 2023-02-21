@@ -10,6 +10,7 @@ urlpatterns = [
 
     path('generate/', GenerateView.as_view(), name='generate'),
     path('questions/', QuestionsView.as_view(), name='questions'),
+    # path('generating-process/', generate_process, name='generating'),
     path('content/<int:content_id>', ContentView.as_view(), name='content'),
     path('change/<int:content_id>', change_questions, name='change_questions'),
     path('archive/', ArchiveView.as_view(), name='archive'),

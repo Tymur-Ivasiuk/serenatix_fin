@@ -1,5 +1,6 @@
 {% extends 'generate/main_base.html' %}
 {% load static %}
+{% load generate_tags %}
 
 {% block css_styles %}
 <link rel="stylesheet" href="{% static 'generate/css/questions.css' %}">
@@ -48,7 +49,7 @@
                             <p class="checkbox-desc">Your answer</p>
                         </div>
                         <div class="input_wrap" style="margin-left: 0;">
-                            <input type="text" name="{{i.id}}" class="answer-input" style="width: 95%;" placeholder="Enter any other answer">
+                            <input type="text" name="{{i.id}}:input" value="{{inputs|get_item_input:i.id}}" class="answer-input" style="width: 95%;" placeholder="Enter any other answer">
                         </div>
                     {% else %}
                         <ul>
@@ -63,7 +64,7 @@
                             <p class="checkbox-desc">Your answer</p>
                         </div>
                         <div class="input_wrap" style="margin-left: 0;">
-                            <input type="text" name="{{i.id}}" data-value="input_save" class="answer-input" style="width: 95%;" placeholder="Enter any other answer">
+                            <input type="text" name="{{i.id}}:input" value="{{inputs|get_item_input:i.id}}" class="answer-input" style="width: 95%;" placeholder="Enter any other answer">
                         </div>
                     {% endif %}
                 </div>

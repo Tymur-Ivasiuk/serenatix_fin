@@ -6,9 +6,9 @@ Share = {
 		url += '&p[url]='       + encodeURIComponent(purl);
 		Share.popup(url);
 	},
-	twitter: function(purl, ptitle) {
+	twitter: function(purl, ptitle, text) {
 		url  = 'http://twitter.com/share?';
-		url += 'text='      + encodeURIComponent(ptitle);
+		url += 'text='      + encodeURIComponent(ptitle + "\n\n" + text);
 		url += '&url='      + encodeURIComponent(purl);
 		url += '&counturl=' + encodeURIComponent(purl);
 		Share.popup(url);
