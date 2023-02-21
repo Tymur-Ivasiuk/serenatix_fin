@@ -18,7 +18,7 @@ def get_item(dictionary, value):
 @register.filter
 def get_item_input(dictionary, value):
     if isinstance(dictionary, dict):
-        return dictionary.get(str(value))
+        return dictionary.get(str(value), "")
     return ""
 
 @register.filter
