@@ -45,7 +45,7 @@
 
     function createContent() {
         $.ajax({
-            url: "{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% url 'generating' %}",
+            url: "https://{{ request.META.HTTP_HOST }}{% url 'generating' %}",
             type: 'GET',
             success: function() {
                 checkAjax();
@@ -54,14 +54,14 @@
     }
 
     function checkAjax() {
-        var json_content_url = "{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% url 'json_generate' %}"
+        var json_content_url = "https://{{ request.META.HTTP_HOST }}{% url 'json_generate' %}"
         $.getJSON(json_content_url, (json) => {
             if (json !== null) {
                 $.ajax({
-                    url: "{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% url 'delete_json' %}",
+                    url: "https://{{ request.META.HTTP_HOST }}{% url 'delete_json' %}",
                     type: 'GET'
                 })
-                window.location.href = "{{ request.scheme }}://{{ request.META.HTTP_HOST }}" + json.url;
+                window.location.href = "https://{{ request.META.HTTP_HOST }}" + json.url;
             }
         })
     }
