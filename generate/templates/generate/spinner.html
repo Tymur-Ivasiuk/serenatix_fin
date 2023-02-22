@@ -1,0 +1,73 @@
+{% extends 'generate/main_base.html' %}
+{% load static %}
+
+
+{% block main %}
+<div id="preloader">
+    <div id="loader"></div>
+    <p>Generating ...</p>
+</div>
+{% endblock %}
+
+
+{% block js_scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<script src="{% static 'generate/js/generatingText.js' %}"></script>
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    function createContent() {
+        $.ajax({
+            url: "{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% url 'generating' %}",
+            type: 'GET',
+            success: function() {
+                checkAjax();
+            }
+        })
+    }
+
+    function checkAjax() {
+        var json_content_url = "{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% url 'json_generate' %}"
+        $.getJSON(json_content_url, (json) => {
+            if (json !== null) {
+                $.ajax({
+                    url: "{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% url 'delete_json' %}",
+                    type: 'GET'
+                })
+                window.location.href = "{{ request.scheme }}://{{ request.META.HTTP_HOST }}" + json.url;
+            }
+        })
+    }
+
+    $(document).ready(function() {
+        createContent();
+    })
+</script>
+{% endblock %}

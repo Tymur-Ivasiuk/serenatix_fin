@@ -158,7 +158,7 @@ class GenerateView(FormView):
             elif self.request.session['unlogined'].get('finished_generate'):
                 self.request.session['generate_info'] = self.request.session.get('unlogined').get('finished_generate').get('info')
                 self.request.session['form_answers'] = self.request.session.get('unlogined').get('finished_generate').get('form_answers')
-                del self.request.session['unlogined']
+                # del self.request.session['unlogined']
                 self.request.session.modified = True
 
         return super(GenerateView, self).dispatch(request, *args, **kwargs)
@@ -202,6 +202,12 @@ class GenerateView(FormView):
 
         return context
 
+    def get(self, request, *args, **kwargs):
+        if request.session.get('unlogined'):
+            if request.session['unlogined'].get('finished_generate'):
+                return redirect('spinner')
+        return self.render_to_response(self.get_context_data())
+
     def post(self, request, *args, **kwargs):
         form = GenerateForm({k: v for k, v in request.POST.items() if k not in {'csrfmiddlewaretoken'}})
         if form.is_valid():
@@ -235,10 +241,15 @@ class GenerateView(FormView):
 class QuestionsView(TemplateView):
     template_name = 'generate/questions.html'
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     if not request.session.get('generate_info'):
-    #         return redirect('generate')
-    #     return super(QuestionsView, self).dispatch(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.session.get('generate_info'):
+            if self.request.user.profile.credits_count < ContentTypes.objects.filter(
+                    id=request.session.get('generate_info').get('content_type')).first().credits:
+                messages.error(self.request, "Sorry, you don't have enough credits")
+                return redirect('generate')
+        if not request.session.get('generate_info'):
+            return redirect('generate')
+        return super(QuestionsView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -286,7 +297,6 @@ class QuestionsView(TemplateView):
                 request.user.profile.save_answers = {'answers': answers, 'form_answers': form_answers, "inputs": inputs}
                 request.user.profile.save()
                 messages.success(request, 'All answers are saved')
-                print("SAVE QUEST")
                 return redirect('generate')
             else:
                 request.session['unlogined'] = {}
@@ -296,10 +306,13 @@ class QuestionsView(TemplateView):
                 return redirect('login')
         else:
             dict_answers = {}
+            print(self.request.POST)
             for k, v in dict(self.request.POST).items():
                 if k not in {'csrfmiddlewaretoken', 'finish', 'save'}:
-                    dict_answers[k.split(":")[0]] = v
-
+                    if dict_answers.get(k.split(":")[0]):
+                        dict_answers[k.split(":")[0]] += v
+                    else:
+                        dict_answers[k.split(":")[0]] = v
             if request.user.is_authenticated:
                 ss = send_ai_request(request.session.get('generate_info'),
                                      dict_answers,
@@ -312,6 +325,57 @@ class QuestionsView(TemplateView):
                 request.session.modified = True
                 messages.info(request, 'You need to login to your account')
                 return redirect('login')
+
+
+# def generate_process(request):
+#     if request.session.get('unlogined'):
+#         if request.session['unlogined'].get('finished_generate'):
+#             ss = send_ai_request(request.session['unlogined']['finished_generate'].get('info'),
+#                                  request.session['unlogined']['finished_generate'].get('form_answers'),
+#                                  request.user)
+#             return redirect(ss)
+#     return redirect('generate')
+
+# AJAX start
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+class GenerateSpinner(TemplateView):
+    template_name = 'generate/spinner.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('unlogined'):
+            return redirect('generate')
+        return super(GenerateSpinner, self).dispatch(request, *args, **kwargs)
+
+def generate_process(request):
+    if request.user.is_authenticated:
+        if request.session.get('unlogined'):
+            if request.session['unlogined'].get('finished_generate'):
+                ss = send_ai_request(request.session['unlogined']['finished_generate'].get('info'),
+                                     request.session['unlogined']['finished_generate'].get('form_answers'),
+                                     request.user)
+                del request.session['unlogined']
+                request.session['content_url'] = {"url": ss}
+                request.session.modified = True
+    else:
+        return redirect('login')
+
+    if is_ajax(request=request):
+        return JsonResponse({'content_url': ss})
+
+    return redirect('generate')
+
+def generate_json(request):
+    return JsonResponse(request.session.get('content_url'), safe=False)
+
+def generate_json_delete(request):
+    if is_ajax(request=request):
+        if request.session.get('content_url'):
+            del request.session['content_url']
+        return JsonResponse({"status": "ok"})
+    return redirect('generate')
+# AJAX end
 
 
 class ContentView(DetailView):

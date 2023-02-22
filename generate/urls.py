@@ -10,7 +10,12 @@ urlpatterns = [
 
     path('generate/', GenerateView.as_view(), name='generate'),
     path('questions/', QuestionsView.as_view(), name='questions'),
-    # path('generating-process/', generate_process, name='generating'),
+
+    path('generating-status/', GenerateSpinner.as_view(), name='spinner'),
+    path('generating-process/', generate_process, name='generating'),
+    path('generate-options/json', generate_json, name='json_generate'),
+    path('generate-options/json/delete', generate_json_delete, name='delete_json'),
+
     path('content/<int:content_id>', ContentView.as_view(), name='content'),
     path('change/<int:content_id>', change_questions, name='change_questions'),
     path('archive/', ArchiveView.as_view(), name='archive'),
