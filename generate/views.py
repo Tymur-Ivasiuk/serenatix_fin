@@ -3,7 +3,7 @@ import os
 import uuid
 
 from django.contrib import messages
-from django.contrib.auth import logout
+from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView, PasswordResetDoneView, \
     PasswordResetConfirmView, PasswordResetCompleteView
 from django.core.mail import mail_admins
@@ -108,6 +108,9 @@ class RegisterUser(CreateView):
 
             # send_email_verify(user.email, auth_token)
             # messages.success(request, 'An email has been sent to your email. Please verify your email address')
+            new_user = authenticate(email=form.cleaned_data['email'], password=form.cleaned_data['password1'])
+            login(request, new_user)
+
             return redirect('login')
         else:
             return render(request, self.template_name, {'form': form})
@@ -303,7 +306,7 @@ class QuestionsView(TemplateView):
                 request.session['unlogined']['save_answers'] = {'answers': answers, 'form_answers': form_answers, "inputs": inputs}
                 request.session.modified = True
                 messages.info(request, 'You need to login to your account')
-                return redirect('login')
+                return redirect('register')
         else:
             dict_answers = {}
             print(self.request.POST)
@@ -324,17 +327,8 @@ class QuestionsView(TemplateView):
                                                                      'form_answers': dict_answers}
                 request.session.modified = True
                 messages.info(request, 'You need to login to your account')
-                return redirect('login')
+                return redirect('register')
 
-
-# def generate_process(request):
-#     if request.session.get('unlogined'):
-#         if request.session['unlogined'].get('finished_generate'):
-#             ss = send_ai_request(request.session['unlogined']['finished_generate'].get('info'),
-#                                  request.session['unlogined']['finished_generate'].get('form_answers'),
-#                                  request.user)
-#             return redirect(ss)
-#     return redirect('generate')
 
 # AJAX start
 def is_ajax(request):
