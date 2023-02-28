@@ -1,6 +1,9 @@
 var content_type = document.querySelector('#content_type_list').querySelectorAll('li')
 var content_styles = document.querySelector('#content_styles_list').querySelectorAll('li')
 
+var style_btn = document.querySelector('#style_button')
+var content_type_input = document.querySelector('input[name="content_type"]')
+
 var styles_input = document.querySelector('input[name="style"]')
 var styles_header_content = document.querySelector('.selectStyle')
 
@@ -18,6 +21,14 @@ content_type.forEach((e) => {
         })
     })
 })
+
+
+style_btn.addEventListener('click', () => {
+    if(content_type_input.value == "None"){
+        alert("Please select content type")
+    }
+})
+
 
 document.addEventListener('DOMContentLoaded', function(){
     var p = content_type[0].parentElement.parentElement.querySelector('.select_current').innerText

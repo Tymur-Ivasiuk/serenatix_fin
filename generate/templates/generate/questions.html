@@ -54,8 +54,8 @@
                     {% else %}
                         <ul>
                         {% for j in i.answers_set.all %}
-                            <li class="checkbox-info">
-                                <p class="checkbox-desc">{{ j.answer }}</p>
+                            <li>
+                                <span class="checkbox-desc">{{ j.answer }}</span>
                             </li>
                         {% endfor %}
                         </ul>
